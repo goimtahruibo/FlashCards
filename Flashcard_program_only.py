@@ -2,7 +2,9 @@ from typing import Set
 import random
 
 class Deck_of_questions:
+    Decknames = []
     def __init__(self,name):
+        Deck_of_questions.Decknames.append(name)
         self.name = name
         self.Questionsfile = name+" QU.txt"
         self.Answerfile = name +" AN.txt"
@@ -42,7 +44,9 @@ class Deck_of_questions:
         self.fileA.close()       
 
 class Course:
+    Coursenames = []
     def __init__(self,name):
+        Course.Coursenames.append(name)
         self.name = name
         self.cards = []#the saved card objects
     def SaveCardlist(self):#Saves the cardlist when new cards are addded
@@ -252,27 +256,37 @@ def main():
                     3)Open a deck to test yourself on Questions
                     4)Test yourself on multiple decks
                     5)Import a file of questions and answers to a new deck #Work in progress do not press
-                    6)Quit
+                    6)Delete Files
+                    7)Quit
                     press the corrosponding number.
                     """)
 
-            option = Check_Options(option,6)
+            option = Check_Options(option,7)
             if option == "1":
-                CardSetname = input("What would you like to name this cardset?")
-                CreateNewCourse(Sets,SetObjects,CardSetname)
-                Repetitions = input("How many Cards would you lke to add to this cardset(must be greater than 0)?")
-                Cont = False
-                while Cont == False:
-                    if Repetitions.isdigit() == False:
-                        Repetitions = input("You have not written a number")
+                backtostart = False
+                while backtostart == False:
+                    Answer = input("""Would you like to:
+                                      1)Add a course
+                                      2)Rename a Course
+                                      """)
+                    if Answer == "1":
+                        pass
                     else:
-                        if int(Repetitions)<1:
-                            Repetitions = input("You must write a number greater than 0")
-                        else:
-                            Cont = True
-                for i in range(int(Repetitions)):
-                    cardname = input("what would you like to name your new cards?")
-                    SetObjects[-1].CreateNewCard(cardname)
+                        CardSetname = input("What would you like to name this cardset?")
+                        CreateNewCourse(Sets,SetObjects,CardSetname)
+                        Repetitions = input("How many Cards would you lke to add to this cardset(must be greater than 0)?")
+                        Cont = False
+                        while Cont == False:
+                            if Repetitions.isdigit() == False:
+                                Repetitions = input("You have not written a number")
+                            else:
+                                if int(Repetitions)<1:
+                                    Repetitions = input("You must write a number greater than 0")
+                                else:
+                                    Cont = True
+                        for i in range(int(Repetitions)):
+                            cardname = input("what would you like to name your new cards?")
+                            SetObjects[-1].CreateNewCard(cardname)
 
             if option == '2':
                 backtostart = False
@@ -552,8 +566,20 @@ def main():
                             Repeat_Card = False
                             backtostart = True
                             
-                        
+            elif option == "5":
+                pass
+            elif option == "6":#Delete stuff
+                ToDelete = input("""What would you like to delete?
+                                    1)Course
+                                    2)Card
+                                    3)Quit
+                                    """)  
+                ToDelete =Check_Options(ToDelete,3)  
+                     
             else:
                 run = False
  
 main()
+def Checkname():
+    print(Deck_of_questions.Decknames,Course.Coursenames)
+Checkname()
