@@ -214,7 +214,25 @@ def TestQuestions(Questions,Answers,num):#Test Questions
             for i in range(len(WrongQuestions)):
                 print("You got "+str(WrongQuestions[i])+" Wrong. You put " +str(Mistakes[i])+" the answer was "+str(WrongAnswers[i]))
     return Questions,Answers,empty
-       
+
+def Checkname(DeckorCourse):
+    name = input("What would you like to name this "+DeckorCourse+"?")
+    Cont = False
+    while Cont == False:
+        index = 0
+        if DeckorCourse == "Deck":
+            for each in Deck_of_questions.Decknames:
+                if each.upper() == name.upper():
+                    index+=1
+        else:       
+            for each in Course.Coursenames:
+                if each.upper() == name.upper():
+                    index+=1
+        if index >0:
+            name = input("There is already a "+DeckorCourse+" named that. Input a new name")
+        else:
+            return(name)
+              
 def main():
     run = True
     index = 0
@@ -582,26 +600,8 @@ def main():
                      
             else:
                 run = False
-def Checkname(DeckorCourse):
-    name = input("What would you like to name this "+DeckorCourse+"?")
-    Cont = False
-    while Cont == False:
-        index = 0
-        if DeckorCourse == "Deck":
-            for each in Deck_of_questions.Decknames:
-                if each.upper() == name.upper():
-                    index+=1
-        else:       
-            for each in Course.Coursenames:
-                if each.upper() == name.upper():
-                    index+=1
-        if index >0:
-            name = input("There is already a "+DeckorCourse+" named that. Input a new name")
-        else:
-            return(name)
 
 main()
-
 def CheckifCoureseempty(CourseAccessed):
     EmptyDecks = 0
     TotalDecks = 0
