@@ -227,8 +227,8 @@ def main():
         if Sets == []:
             Answer = input("Welcome to Omars Flashcard thing. You currently have no Courses saved , press one to add one, 2 to quit")
             if Answer == "1":
-                CardSetname = input("What would you like to name this Course?")
-                CreateNewCourse(Sets,SetObjects,CardSetname)
+                Coursename = Checkname("Course")
+                CreateNewCourse(Sets,SetObjects,Coursename)
                 Repetitions = input("How many Cards would you lke to add to this Course(must be greater than 0)?")
                 Cont = False
                 while Cont == False:
@@ -240,7 +240,7 @@ def main():
                         else:
                             Cont = True
                 for i in range(int(Repetitions)):
-                    cardname = input("what would you like to name your new cards?")
+                    cardname = Checkname("Deck")
                     SetObjects[-1].CreateNewCard(cardname)
                 
             else:
@@ -268,11 +268,10 @@ def main():
                     Answer = input("""Would you like to:
                                       1)Add a course
                                       2)Rename a Course
+                                      3)Quit
                                       """)
                     if Answer == "1":
-                        pass
-                    else:
-                        CardSetname = input("What would you like to name this cardset?")
+                        CardSetname = Checkname("Course")
                         CreateNewCourse(Sets,SetObjects,CardSetname)
                         Repetitions = input("How many Cards would you lke to add to this cardset(must be greater than 0)?")
                         Cont = False
@@ -285,8 +284,12 @@ def main():
                                 else:
                                     Cont = True
                         for i in range(int(Repetitions)):
-                            cardname = input("what would you like to name your new cards?")
+                            cardname = Checkname("Deck")
                             SetObjects[-1].CreateNewCard(cardname)
+                    if Answer == "2":
+                        pass
+                    else:
+                        backtostart = True
 
             if option == '2':
                 backtostart = False
@@ -315,7 +318,7 @@ def main():
                         if Answer == '1':
                             Repetitions = input("How many cards would you like to add?")
                             for i in range(int(Repetitions)):
-                                cardname = input("What would you like to name the card")
+                                cardname = Checkname("Deck")
                                 CourseAccessed.CreateNewCard(cardname)
                         elif Answer == '2':
                             backtooptionmenu = False
@@ -327,7 +330,7 @@ def main():
                                     Cardname = input(("You did not spell the name correctly"))
                                     CardAccessed = GetDeck(Cardname,CourseAccessed)
                                 if CardAccessed.Alist == []:
-                                    Repetitions = input("There are no questions in this card, how many do you want to add?(must be >0")
+                                    Repetitions = input("There are no questions in this Deck, how many do you want to add?(must be >0")
                                     Cont = False
                                     while Cont == False:
                                         if Repetitions.isdigit() == False:
@@ -392,7 +395,7 @@ def main():
                     print("             "+each) 
                 backtostart = False
                 while backtostart == False:
-                    AccessCourse = input("Which set would you like to Access?")
+                    AccessCourse = input("Which Course would you like to Access?")
                     CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,SetObjects)
                     while CourseAccessed == False:
                         AccessCourse = input("You typed in the name wrong lol")
@@ -578,8 +581,22 @@ def main():
                      
             else:
                 run = False
- 
+def Checkname(DeckorCourse):
+    name = input("What would you like to name this "+DeckorCourse+"?")
+    Cont = False
+    while Cont == False:
+        index = 0
+        if DeckorCourse == "Deck":
+            for each in Deck_of_questions.Decknames:
+                if each.upper() == name.upper():
+                    index+=1
+        else:       
+            for each in Course.Coursenames:
+                if each.upper() == name.upper():
+                    index+=1
+        if index >0:
+            name = input("There is already a "+DeckorCourse+" named that. Input a new name")
+        else:
+            return(name)
+
 main()
-def Checkname():
-    print(Deck_of_questions.Decknames,Course.Coursenames)
-Checkname()
