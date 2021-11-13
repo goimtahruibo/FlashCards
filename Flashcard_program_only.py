@@ -402,22 +402,6 @@ def main():
                         AccessCourse = input("You typed in the name wrong lol")
                         CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,SetObjects)
                     Repeat_Course = True
-                    EmptyDecks = 0
-                    TotalDecks = 0
-                    for each in CourseAccessed.cards:
-                        if each.Qlist == []:
-                            EmptyDecks +=1
-                        else:
-                            TotalDecks += 1
-                    if  TotalDecks == EmptyDecks:
-                        Repeat_Course = False
-                        Goback = input("""That Course does not have any questions in any of its decks Would you like to:
-                                          1)Try to open another Course
-                                          2)Go back to menu
-                                          """)
-                        Goback = Check_Options(Goback,2)
-                        if Goback == "2":
-                            backtostart = True
                             
                     while Repeat_Course == True:
                         print("The Cards within "+CourseAccessed.name+" set are")
@@ -617,3 +601,22 @@ def Checkname(DeckorCourse):
             return(name)
 
 main()
+
+def CheckifCoureseempty(CourseAccessed):
+    EmptyDecks = 0
+    TotalDecks = 0
+    for each in CourseAccessed.cards:
+        print(each,each.Qlist)
+        if each.Qlist == []:
+            EmptyDecks +=1
+        else:
+            TotalDecks += 1
+    if  TotalDecks == EmptyDecks:
+        Repeat_Course = False
+        Goback = input("""That Course does not have any questions in any of its decks Would you like to:
+                          1)Try to open another Course
+                          2)Go back to menu
+                          """)
+        Goback = Check_Options(Goback,2)
+        if Goback == "2":
+            backtostart = True
