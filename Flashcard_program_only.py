@@ -56,6 +56,7 @@ class Course:
         self.CardsFile = open(self.name+" Set.txt","w")
         for each in self.cardnames:
             self.CardsFile.write(each+"\n")
+        self.CardsFile.close()
     def CreateNewCard(self,cardname):#creates a new Card object and saves it to the textfile
         self.cards.append(Deck_of_questions(cardname))#adds an object to cards list of type cards
         self.cards[-1].CreateFiles()
@@ -286,7 +287,7 @@ def main():
                         for i in range(int(Repetitions)):
                             cardname = Checkname("Deck")
                             SetObjects[-1].CreateNewCard(cardname)
-                    if Answer == "2":
+                    elif Answer == "2":
                         pass
                     else:
                         backtostart = True
@@ -401,7 +402,23 @@ def main():
                         AccessCourse = input("You typed in the name wrong lol")
                         CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,SetObjects)
                     Repeat_Course = True
-
+                    EmptyDecks = 0
+                    TotalDecks = 0
+                    for each in CourseAccessed.cards:
+                        if each.Qlist == []:
+                            EmptyDecks +=1
+                        else:
+                            TotalDecks += 1
+                    if  TotalDecks == EmptyDecks:
+                        Repeat_Course = False
+                        Goback = input("""That Course does not have any questions in any of its decks Would you like to:
+                                          1)Try to open another Course
+                                          2)Go back to menu
+                                          """)
+                        Goback = Check_Options(Goback,2)
+                        if Goback == "2":
+                            backtostart = True
+                            
                     while Repeat_Course == True:
                         print("The Cards within "+CourseAccessed.name+" set are")
                         for each in CourseAccessed.cards:
