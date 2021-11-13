@@ -512,18 +512,37 @@ def main():
                                 backtostart = True
             elif option =="4":
                 backtostart = False
+                AccessedCourse = False
                 while backtostart == False:
-                    print("""The Courses saved are""")
-                    for each in Sets:
-                        print("             "+each) 
-                    AccessCourse = input("Which set would you like to Access?")
-                    CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,SetObjects)
-                    while CourseAccessed == False:
-                        AccessCourse = input("You typed in the name wrong lol")
+                    while AccessedCourse == False:#This was added because of the Checkempty as I want the program to come back here
+                        # if the course is empty. If I did not have the while loop I could not make Repeatcard False as it would coninue the program to there (Can you tell I wrote this at 11 pm lol)
+                        print("""The Courses saved are""")
+                        for each in Sets:
+                            print("             "+each) 
+                        AccessCourse = input("Which set would you like to Access?")
                         CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,SetObjects)
-                    Accessedall = False
-                    DecksAvailable = CourseAccessed.cards
-                    TestCards = []
+                        while CourseAccessed == False:
+                            AccessCourse = input("You typed in the name wrong lol")
+                            CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,SetObjects)
+                        EmptyCourse = CheckifCoureseempty(CourseAccessed)
+                        if EmptyCourse == True:
+                            Repeat_Card = False
+                            Accessedall = True
+                            Goback = input("""That course is empty. Would you like to:
+                                            1)Choose a different course
+                                            2)Quit
+                                            """)
+                            Goback = Check_Options(Goback,2)# you can probably add this and above to the emptycourse function
+                            if Goback == "2":
+                                AccessedCourse = True
+                                backtostart = True
+                        else:
+                            AccessedCourse = True
+                            Accessedall = False
+                            Repeat_Card = True
+                        DecksAvailable = CourseAccessed.cards
+                        TestCards = []
+                    
                     while Accessedall == False:
                         print("Your Decks available to choose from are")
                         for each in DecksAvailable:
@@ -564,7 +583,6 @@ def main():
                         Questions.append(each)
                     for each in LongAnswers:
                         Answers.append(each)
-                    Repeat_Card = True
                     while Repeat_Card == True:
                         Maxno = len(Questions)
                         Answer = input("There are "+str(Maxno)+" Questions. How many would you like to be tested on?")
