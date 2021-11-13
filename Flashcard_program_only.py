@@ -215,7 +215,7 @@ def TestQuestions(Questions,Answers,num):#Test Questions
                 print("You got "+str(WrongQuestions[i])+" Wrong. You put " +str(Mistakes[i])+" the answer was "+str(WrongAnswers[i]))
     return Questions,Answers,empty
 
-def Checkname(DeckorCourse):
+def Checkname(DeckorCourse):#Made to check that the user does not make a repeated course or Deck
     name = input("What would you like to name this "+DeckorCourse+"?")
     Cont = False
     while Cont == False:
@@ -232,6 +232,17 @@ def Checkname(DeckorCourse):
             name = input("There is already a "+DeckorCourse+" named that. Input a new name")
         else:
             return(name)
+def CheckifCoureseempty(CourseAccessed):#Checks if a course is empty when doing the question test
+    EmptyDecks = 0
+    TotalDecks = 0
+    for each in CourseAccessed.cards:
+        TotalDecks += 1
+        if each.Qlist == []:
+            EmptyDecks +=1
+    if  TotalDecks == EmptyDecks:
+        return True
+    else:
+        return False
               
 def main():
     run = True
@@ -420,7 +431,16 @@ def main():
                         AccessCourse = input("You typed in the name wrong lol")
                         CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,SetObjects)
                     Repeat_Course = True
-                            
+                    Empty = CheckifCoureseempty(CourseAccessed)
+                    if Empty == True:
+                        Repeat_Course = False
+                        Goback = input("""That Course is empty. Would you like to
+                                          1)Choose a different course
+                                          2)Quit
+                                          """)    
+                    Check_Options(Goback,2)
+                    if Goback == "2":
+                        backtostart = True    
                     while Repeat_Course == True:
                         print("The Cards within "+CourseAccessed.name+" set are")
                         for each in CourseAccessed.cards:
@@ -602,21 +622,3 @@ def main():
                 run = False
 
 main()
-def CheckifCoureseempty(CourseAccessed):
-    EmptyDecks = 0
-    TotalDecks = 0
-    for each in CourseAccessed.cards:
-        print(each,each.Qlist)
-        if each.Qlist == []:
-            EmptyDecks +=1
-        else:
-            TotalDecks += 1
-    if  TotalDecks == EmptyDecks:
-        Repeat_Course = False
-        Goback = input("""That Course does not have any questions in any of its decks Would you like to:
-                          1)Try to open another Course
-                          2)Go back to menu
-                          """)
-        Goback = Check_Options(Goback,2)
-        if Goback == "2":
-            backtostart = True
