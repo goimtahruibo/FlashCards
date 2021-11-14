@@ -243,7 +243,18 @@ def CheckifCoureseempty(CourseAccessed):#Checks if a course is empty when doing 
         return True
     else:
         return False
-              
+def Check_Repetition_number(number):#Used for when I ask for multuple cards to be made
+    cont = False
+    greaterthan0 = True
+    while cont == False:
+        if number.isdigit() == True:
+            if int(number) > 0:
+                cont = True
+                return number   
+            else:
+                greaterthan0 = False
+        if greaterthan0 == False or number.isdigit() == False:
+            number = input("Sorry you have written the number incorrectly, it has to be a whole number > 0")
 def main():
     run = True
     index = 0
@@ -261,14 +272,7 @@ def main():
                 CreateNewCourse(Sets,SetObjects,Coursename)
                 Repetitions = input("How many Cards would you lke to add to this Course(must be greater than 0)?")
                 Cont = False
-                while Cont == False:
-                    if Repetitions.isdigit() == False:
-                        Repetitions = input("You have not written a number")
-                    else:
-                        if int(Repetitions)<1:
-                            Repetitions = input("You must write a number greater than 0")
-                        else:
-                            Cont = True
+                Repetitions = Check_Repetition_number(Repetitions)
                 for i in range(int(Repetitions)):
                     cardname = Checkname("Deck")
                     SetObjects[-1].CreateNewCard(cardname)
@@ -301,18 +305,11 @@ def main():
                                       3)Quit
                                       """)
                     if Answer == "1":
-                        CardSetname = Checkname("Course")
+                        CardSetname = Checkname("Course")# you can probablt put this in teh function below
                         CreateNewCourse(Sets,SetObjects,CardSetname)
                         Repetitions = input("How many Cards would you lke to add to this cardset(must be greater than 0)?")
                         Cont = False
-                        while Cont == False:
-                            if Repetitions.isdigit() == False:
-                                Repetitions = input("You have not written a number")
-                            else:
-                                if int(Repetitions)<1:
-                                    Repetitions = input("You must write a number greater than 0")
-                                else:
-                                    Cont = True
+                        Repetitions = Check_Repetition_number(Repetitions)
                         for i in range(int(Repetitions)):
                             cardname = Checkname("Deck")
                             SetObjects[-1].CreateNewCard(cardname)
@@ -347,6 +344,7 @@ def main():
                         Answer = Check_Options(Answer,4)
                         if Answer == '1':
                             Repetitions = input("How many cards would you like to add?")
+                            Repetitions = Check_Repetition_number
                             for i in range(int(Repetitions)):
                                 cardname = Checkname("Deck")
                                 CourseAccessed.CreateNewCard(cardname)
@@ -361,15 +359,7 @@ def main():
                                     CardAccessed = GetDeck(Cardname,CourseAccessed)
                                 if CardAccessed.Alist == []:
                                     Repetitions = input("There are no questions in this Deck, how many do you want to add?(must be >0")
-                                    Cont = False
-                                    while Cont == False:
-                                        if Repetitions.isdigit() == False:
-                                            Repetitions = input("You have not written a number")
-                                        else:
-                                            if int(Repetitions)<1:
-                                                Repetitions = input("You must write a number greater than 0")
-                                            else:
-                                                Cont = True   
+                                    Repeitions = Check_Repetition_number 
                                     for i in range(int(Repetitions)):
                                         Question = input("What is the question")
                                         Answr = input("What is the Answer") 
