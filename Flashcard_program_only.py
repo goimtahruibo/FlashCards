@@ -41,8 +41,20 @@ class Deck_of_questions:
         self.fileA = open(self.Answerfile,"w")
         for answer in self.Alist:
             self.fileA.write(answer+"\n")
-        self.fileA.close()       
-
+        self.fileA.close()   
+    def Import_QandA(self,QuestionFile,AnswerFile):#Test if this works when ellis comes and sends the file
+        self.ImportedQ = open(QuestionFile+".txt")
+        self.Importedlist = self.ImportedQ.readlines()
+        for each in self.Importedlist:
+            self.Qlist.append(each.strip())
+        self.ImportedQ.close()
+        self.ImportedA = open(AnswerFile+".txt")
+        self.Importedlist = self.ImportedA.readlines()
+        for each in self.Importedlist:
+            self.Alist.append(each.strip())
+        self.ImportedA.close()
+        self.SaveQandA()
+        
 class Course:
     Coursenames = []
     def __init__(self,name):
@@ -256,7 +268,7 @@ def Check_Repetition_number(number):#Used for when I ask for multuple cards to b
         if greaterthan0 == False or number.isdigit() == False:
             number = input("Sorry you have written the number incorrectly, it has to be a whole number > 0")
 def main():
-    run = True
+    run = False
     index = 0
     Sets = GetCardSets()
     SetObjects = []
@@ -624,8 +636,7 @@ def main():
                                     2)Card
                                     3)Quit
                                     """)  
-                ToDelete =Check_Options(ToDelete,3)  
-                     
+                ToDelete =Check_Options(ToDelete,3)         
             else:
                 run = False
 
