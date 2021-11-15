@@ -109,34 +109,34 @@ def SaveCourses(Sets):#Saves the names of all the Courses created in this sessio
         File.write(each+"\n")
     File.close()
 
-def CreateNewCourse(Sets,SetObjects,Coursename):# creates a new course and create and empty list for it to contain its Decks
+def CreateNewCourse(Sets,CourseObjects,Coursename):# creates a new course and create and empty list for it to contain its Decks
     Sets.append(Coursename)
-    SetObjects.append(Course(Coursename))#creates a new Courses object with Coursename as the name
-    SetObjects[-1].CreateDeckList()#Creates the Decklist to contain its Decks
+    CourseObjects.append(Course(Coursename))#creates a new Courses object with Coursename as the name
+    CourseObjects[-1].CreateDeckList()#Creates the Decklist to contain its Decks
     SaveCourses(Sets)
 
 def GetDeck(Deckname,CourseAccessed):#Gets the Decks list with the name requested from the user
     index = 0
     for each in CourseAccessed.Decks:#Checks if the name from Deckname is the same as a name of a Deck within the Course the user already chose
+        print(each,Deckname)
         if each.name.upper() == Deckname.upper():
             DeckAccessed = CourseAccessed.Decks[index]
-            #print("lol")
             return(DeckAccessed)
         index += 1
-    if index == len(CourseAccessed.Decks):# if the user types in teh wrong name this will return false to continue a while loop
+    if index == len(CourseAccessed.Decks):# if the user types in the wrong name this will return false to continue a while loop
         return False
 
-def Access_Decks_in_Courses(AccessSet,Sets,SetObjects):#Returns the Set that the user wants
+def Access_Decks_in_Courses(AccessSet,Sets,CourseObjects):#Returns the Set that the user wants
     index = 0
     for each in Sets:#Gets the Course that the user requested by checking each Course
         if AccessSet.upper() == each.upper():
-            SetAccessed = SetObjects[index]
+            SetAccessed = CourseObjects[index]
             return(SetAccessed)
         index += 1
     if index == len(Sets):#if there are no Course with the name it continues the while loop and returns false
         return False
+    
 #I made this into a function because I realised it would work for questions and options
-
 def Check_Num_Validity(number,Length):# Returns True if the number that the user requested is less than one or greater than a number
     if number.isdigit() == True:#Checks if the user input is an integer
         if int(number) > Length:#this is in teh other if statement as if editno.isdigit() = False then you can't turn Editno into a int
@@ -271,23 +271,23 @@ def main():
     run = True
     index = 0
     Sets = GetCourse()
-    SetObjects = []
+    CourseObjects = []
     for each in Sets:
-        SetObjects.append(Course(each.strip()))
-        SetObjects[index].InstantiateSavedSets()
+        CourseObjects.append(Course(each.strip()))
+        CourseObjects[index].InstantiateSavedSets()
         index+=1
     while run == True:
         if Sets == []:
             Answer = input("Welcome to Omars Flashcard thing. You currently have no Courses saved , press one to add one, 2 to quit")
             if Answer == "1":
                 Coursename = Checkname("Course")
-                CreateNewCourse(Sets,SetObjects,Coursename)
+                CreateNewCourse(Sets,CourseObjects,Coursename)
                 Repetitions = input("How many Decks would you lke to add to this Course(must be greater than 0)?")
                 Cont = False
                 Repetitions = Check_Repetition_number(Repetitions)
                 for i in range(int(Repetitions)):
                     Deckname = Checkname("Deck")
-                    SetObjects[-1].CreateNewDeck(Deckname)
+                    CourseObjects[-1].CreateNewDeck(Deckname)
                 
             else:
                 run == False
@@ -318,13 +318,13 @@ def main():
                                       """)
                     if Answer == "1":
                         Coursename = Checkname("Course")# you can probablt put this in teh function below
-                        CreateNewCourse(Sets,SetObjects,Coursename)
+                        CreateNewCourse(Sets,CourseObjects,Coursename)
                         Repetitions = input("How many Decks would you lke to add to this Course(must be greater than 0)?")
                         Cont = False
                         Repetitions = Check_Repetition_number(Repetitions)
                         for i in range(int(Repetitions)):
                             Deckname = Checkname("Deck")
-                            SetObjects[-1].CreateNewDeck(Deckname)
+                            CourseObjects[-1].CreateNewDeck(Deckname)
                     elif Answer == "2":
                         pass
                     else:
@@ -337,10 +337,10 @@ def main():
                     for each in Sets:
                         print(each)
                     AccessCourse = input("Which Course would you like to Access?")
-                    CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,SetObjects)
+                    CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,CourseObjects)
                     while CourseAccessed == False:
                         AccessCourse = input("You typed in the name wrong")
-                        CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,SetObjects)
+                        CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,CourseObjects)
                     Samecourse = True
                     while Samecourse == True:
                             
@@ -364,7 +364,6 @@ def main():
                             backtooptionmenu = False
                             while backtooptionmenu == False:
                                 Deckname = input("Which Deck do you want to access?")
-                                DeckAccessed = False
                                 DeckAccessed = GetDeck(Deckname,CourseAccessed)
                                 while DeckAccessed == False:
                                     Deckname = input(("You did not spell the name correctly"))
@@ -428,10 +427,10 @@ def main():
                 backtostart = False
                 while backtostart == False:
                     AccessCourse = input("Which Course would you like to Access?")
-                    CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,SetObjects)
+                    CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,CourseObjects)
                     while CourseAccessed == False:
                         AccessCourse = input("You typed in the name wrong lol")
-                        CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,SetObjects)
+                        CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,CourseObjects)
                     Repeat_Course = True
                     Empty = CheckifCoureseempty(CourseAccessed)
                     if Empty == True:
@@ -452,8 +451,9 @@ def main():
                         DeckAccessed = False
                         DeckAccessed = GetDeck(Deckname,CourseAccessed)
                         while DeckAccessed == False:
-                            DeckAccessed = input(("You did not spell the name correctly"))
+                            Deckname = input(("You did not spell the name correctly"))
                             DeckAccessed = GetDeck(Deckname,CourseAccessed)
+                            print(DeckAccessed)
                         Repeat_Deck = True
                         Questions = []
                         Answers = []
@@ -522,10 +522,10 @@ def main():
                         for each in Sets:
                             print("             "+each) 
                         AccessCourse = input("Which Course would you like to Access?")
-                        CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,SetObjects)
+                        CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,CourseObjects)
                         while CourseAccessed == False:
                             AccessCourse = input("You typed in the name wrong lol")
-                            CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,SetObjects)
+                            CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,CourseObjects)
                         EmptyCourse = CheckifCoureseempty(CourseAccessed)
                         if EmptyCourse == True:
                             Repeat_Deck = False
