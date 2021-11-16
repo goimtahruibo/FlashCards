@@ -145,16 +145,16 @@ def CreateNewCourse(Sets,CourseObjects,Coursename):# creates a new course and cr
     SaveCourses(Sets)
 
 
-def Access_Course(AccessSet,Sets,CourseObjects):#Returns the Set that the user wants
+def Access_Course(AccessSet,Coursenames,CourseObjects):#Returns the Set that the user wants
     cont = False
     while cont == False:
         index = 0
-        for each in Sets:#Gets the Course that the user requested by checking each Course
+        for each in Coursenames:#Gets the Course that the user requested by checking each Course
             if AccessSet.upper() == each.upper():
                 SetAccessed = CourseObjects[index]
                 return(SetAccessed)
             index += 1
-        if index == len(Sets):#if there are no Course with the name it continues the while loop and returns false
+        if index == len(Coursenames):#if there are no Course with the name it continues the while loop and returns false
             cont = False
             AccessSet = input("sorry, you typed in the name wrong, try again ")
         
@@ -288,22 +288,26 @@ def Check_Repetition_number(number):#Used for when I ask for multuple decks to b
             else:
                 greaterthan0 = False
         if greaterthan0 == False or number.isdigit() == False:
-            number = input("Sorry you have written the number incorrectly, it has to be a whole number > 0")
+            number = input("Sorry you have written the number incorrectly, it has to be a whole number > 0 ")
+def DisplayCourses(Coursenames):
+    print("Your courses available are.")
+    for each in Coursenames:
+        print(each)
 def main():
     run = True
     index = 0
-    Sets = GetCourse()
+    Coursenames = GetCourse()
     CourseObjects = []
-    for each in Sets:
+    for each in Coursenames:
         CourseObjects.append(Course(each.strip()))
         CourseObjects[index].InstantiateSavedSets()
         index+=1
     while run == True:
-        if Sets == []:
+        if Coursenames == []:
             Answer = input("Welcome to Omars Flashcard thing. You currently have no Courses saved , press one to add one, 2 to quit")
             if Answer == "1":
                 Coursename = Checkname("Course")
-                CreateNewCourse(Sets,CourseObjects,Coursename)
+                CreateNewCourse(Coursenames,CourseObjects,Coursename)
                 Repetitions = input("How many Decks would you lke to add to this Course(must be greater than 0)?")
                 Cont = False
                 Repetitions = Check_Repetition_number(Repetitions)
@@ -314,10 +318,8 @@ def main():
             else:
                 run == False
         else:
-            print("""Hello, Welcome to Omars Flashcard file saver.
-                    Your current saved Sets is/are called:""")
-            for each in Sets:
-                print("             "+each)
+            print("""Hello, Welcome to Omars Flashcard file saver.""")
+            DisplayCourses(Coursenames)
             option = input("""Would you like to:
                     1)Create a new Course or rename a Course
                     2)Access one of you current Courses and edit the Decks within or add new Decks
@@ -340,7 +342,7 @@ def main():
                                       """)
                     if Answer == "1":
                         Coursename = Checkname("Course")# you can probablt put this in teh function below
-                        CreateNewCourse(Sets,CourseObjects,Coursename)
+                        CreateNewCourse(Coursename,CourseObjects,Coursename)
                         Repetitions = input("How many Decks would you lke to add to this Course(must be greater than 0)?")
                         Cont = False
                         Repetitions = Check_Repetition_number(Repetitions)
@@ -355,14 +357,9 @@ def main():
             if option == '2':
                 backtostart = False
                 while backtostart == False:
-                    print("the courses available are:")
-                    for each in Sets:
-                        print(each)
+                    DisplayCourses(Coursenames)
                     AccessCourse = input("Which Course would you like to Access?")
-                    CourseAccessed = Access_Course(AccessCourse,Sets,CourseObjects)
-                    while CourseAccessed == False:
-                        AccessCourse = input("You typed in the name wrong")
-                        CourseAccessed = Access_Course(AccessCourse,Sets,CourseObjects)
+                    CourseAccessed = Access_Course(AccessCourse,Coursenames,CourseObjects)
                     Samecourse = True
                     while Samecourse == True:
                             
@@ -449,16 +446,11 @@ def main():
 
             if option == "3":
                 empty = False
-                print("""The Courses saved are""")
-                for each in Sets:
-                    print("             "+each) 
+                DisplayCourses()
                 backtostart = False
                 while backtostart == False:
                     AccessCourse = input("Which Course would you like to Access? ")
-                    CourseAccessed = Access_Course(AccessCourse,Sets,CourseObjects)
-                    while CourseAccessed == False:
-                        AccessCourse = input("You typed in the name wrong lol ")
-                        CourseAccessed = Access_Course(AccessCourse,Sets,CourseObjects)
+                    CourseAccessed = Access_Course(AccessCourse,Coursenames,CourseObjects)
                     Repeat_Course = True
                     Empty = CheckifCoureseempty(CourseAccessed)
                     if Empty == True:
@@ -541,14 +533,9 @@ def main():
                 while backtostart == False:
                     while AccessedCourse == False:#This was added because of the Checkempty as I want the program to come back here
                         # if the course is empty. If I did not have the while loop I could not make RepeatDeck False as it would coninue the program to there (Can you tell I wrote this at 11 pm lol)
-                        print("""The Courses saved are""")
-                        for each in Sets:
-                            print("             "+each) 
+                        DisplayCourses(Coursenames)
                         AccessCourse = input("Which Course would you like to Access?")
-                        CourseAccessed = Access_Course(AccessCourse,Sets,CourseObjects)
-                        while CourseAccessed == False:
-                            AccessCourse = input("You typed in the name wrong lol")
-                            CourseAccessed = Access_Course(AccessCourse,Sets,CourseObjects)
+                        CourseAccessed = Access_Course(AccessCourse,Coursenames,CourseObjects)
                         EmptyCourse = CheckifCoureseempty(CourseAccessed)
                         if EmptyCourse == True:
                             Repeat_Deck = False
@@ -655,7 +642,9 @@ def main():
                                   """)
                 Answer = Check_Options(Answer,2)
                 if Answer == "1":
-                    Access = 0
+                    Accessed_Course = input("Which course would you like to access? ")
+                    Accessed_Course = Access_Course(Accessed_Course,Coursenames,CourseObjects)
+                    
                 ToDelete = input("""What would you like to delete?
                                     1)Course
                                     2)Deck
