@@ -1,6 +1,5 @@
-from typing import Set
+from typing import Set#IDK what this does, i don't want to break the programm so it's here
 import random
-
 class Deck_of_questions:
     Decknames = []
     def __init__(self,name):
@@ -42,7 +41,7 @@ class Deck_of_questions:
         for answer in self.Alist:
             self.fileA.write(answer+"\n")
         self.fileA.close()   
-    def Import_QandA(self,QuestionFile,AnswerFile):#Test if this works when ellis comes and sends the file
+    def Import_QandAtextfile(self,QuestionFile,AnswerFile):#Test if this works when ellis comes and sends the file
         self.ImportedQ = open(QuestionFile+".txt")
         self.Importedlist = self.ImportedQ.readlines()
         for each in self.Importedlist:
@@ -53,6 +52,21 @@ class Deck_of_questions:
         for each in self.Importedlist:
             self.Alist.append(each.strip())
         self.ImportedA.close()
+        self.SaveQandA()
+    def Import_csvQandA(self,Filename):
+        File = open(Filename+".csv","r")
+        Lines = File.readlines()
+        for each in Lines:
+            each = each.strip()
+            comma = each.find(",")
+            Question = each[:comma]
+            Answer = each[comma+1:]
+            self.Qlist.append(Question)
+            self.Alist.append(Answer)
+        self.SaveQandA()
+    def DeleteQandA(self,Index):
+        self.Qlist.pop(Index)
+        self.Alist.pop(Index)
         self.SaveQandA()
         
 class Course:
@@ -387,29 +401,38 @@ def main():
                                                     1)Edit a question
                                                     2)Edit an answer
                                                     3)Add a question and answer
-                                                    4)Goback to course menu to edit a different Deck or course
+                                                    4)Delete a Question and Answer
+                                                    5)Import a file
+                                                    6)Goback to course menu to edit a different Deck or course
                                                     """)
-                                    Options = Check_Options(Options,4)
+                                    Options = Check_Options(Options,6)
                                     if Options == "1":
                                         Editno = input("which question number would you like to edit?")
                                         Editno = Get_Answer_or_Question_num(DeckAccessed,Editno)
                                         Edit = input("What would you like to change "+DeckAccessed.Qlist[Editno]+" to?")
                                         DeckAccessed.Qlist[Editno] = Edit   
                                         DeckAccessed.SaveQandA()
-                                    if Options == "2":
+                                    elif Options == "2":
                                         Editno = input("which answer number would you like to edit?")
                                         Editno = Get_Answer_or_Question_num(DeckAccessed,Editno)
                                         Edit = input("What would you like to change "+DeckAccessed.Alist[Editno]+" to?")
                                         DeckAccessed.Alist[Editno] = Edit
                                         DeckAccessed.SaveQandA()  
-                                    if Options == "3":
+                                    elif Options == "3":
                                         repetitions= int(input("How many questions and answers would you like to add?"))
                                         for i in range(repetitions):
                                             Question = input("What is the question")
                                             Answer = input("What is the Answer")
                                             DeckAccessed.AddQandA(Question,Answer)
                                         DeckAccessed.SaveQandA()
-                                    if Options == "4":
+                                    elif Options == "4":
+                                        IndextoDelete = input("Which Question number do you want to delete?")
+                                        IndextoDelete = Get_Answer_or_Question_num(DeckAccessed,IndextoDelete)
+                                        DeckAccessed.DeleteQandA(int(IndextoDelete))
+                                    elif Options == "5":
+                                        print("This is in the works")
+                                        pass
+                                    elif Options == "6":
                                         SameDeck = False
                                         backtooptionmenu = True
                         elif Answer == '3':
