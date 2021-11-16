@@ -132,7 +132,6 @@ def CreateNewCourse(Sets,CourseObjects,Coursename):# creates a new course and cr
 def GetDeck(Deckname,CourseAccessed):#Gets the Decks list with the name requested from the user
     index = 0
     for each in CourseAccessed.Decks:#Checks if the name from Deckname is the same as a name of a Deck within the Course the user already chose
-        print(each,Deckname)
         if each.name.upper() == Deckname.upper():
             DeckAccessed = CourseAccessed.Decks[index]
             return(DeckAccessed)
@@ -207,7 +206,7 @@ def TestQuestions(Questions,Answers,num):#Test Questions
     for i in range (num):
         TestQ = random.randint(0,len(Questions)-1)
         Questions_asked.append(TestQ)
-        Answer = input("What is the the answer to this question "+Questions[TestQ])
+        Answer = input("What is the the answer to this question "+Questions[TestQ]+": ")
         Total +=1
         if Answer.upper() != Answers[TestQ].upper():
             print("You answered the question incorrectly, The correct answer was "+Answers[TestQ])
@@ -234,7 +233,7 @@ def TestQuestions(Questions,Answers,num):#Test Questions
     if Questions == []:
         empty = True
     if WrongAnswers != []:
-        Seemistake = input("Would you like to see the questions you got wrong? Y/N?")
+        Seemistake = input("Would you like to see the questions you got wrong? Y/N? ")
         Seemistake = CheckYorN(Seemistake)
         if Seemistake.upper() == "Y":
             for i in range(len(WrongQuestions)):
@@ -407,30 +406,30 @@ def main():
                                                     """)
                                     Options = Check_Options(Options,6)
                                     if Options == "1":
-                                        Editno = input("which question number would you like to edit?")
+                                        Editno = input("which question number would you like to edit? ")
                                         Editno = Get_Answer_or_Question_num(DeckAccessed,Editno)
-                                        Edit = input("What would you like to change "+DeckAccessed.Qlist[Editno]+" to?")
+                                        Edit = input("What would you like to change "+DeckAccessed.Qlist[Editno]+" to? ")
                                         DeckAccessed.Qlist[Editno] = Edit   
                                         DeckAccessed.SaveQandA()
                                     elif Options == "2":
-                                        Editno = input("which answer number would you like to edit?")
+                                        Editno = input("which answer number would you like to edit? ")
                                         Editno = Get_Answer_or_Question_num(DeckAccessed,Editno)
-                                        Edit = input("What would you like to change "+DeckAccessed.Alist[Editno]+" to?")
+                                        Edit = input("What would you like to change "+DeckAccessed.Alist[Editno]+" to? ")
                                         DeckAccessed.Alist[Editno] = Edit
                                         DeckAccessed.SaveQandA()  
                                     elif Options == "3":
                                         repetitions= int(input("How many questions and answers would you like to add?"))
                                         for i in range(repetitions):
-                                            Question = input("What is the question")
-                                            Answer = input("What is the Answer")
+                                            Question = input("What is the question ")
+                                            Answer = input("What is the Answer ")
                                             DeckAccessed.AddQandA(Question,Answer)
                                         DeckAccessed.SaveQandA()
                                     elif Options == "4":
-                                        IndextoDelete = input("Which Question number do you want to delete?")
+                                        IndextoDelete = input("Which Question number do you want to delete? ")
                                         IndextoDelete = Get_Answer_or_Question_num(DeckAccessed,IndextoDelete)
                                         DeckAccessed.DeleteQandA(int(IndextoDelete))
                                     elif Options == "5":
-                                        print("This is in the works")
+                                        print("This is in the works ")
                                         pass
                                     elif Options == "6":
                                         SameDeck = False
@@ -449,10 +448,10 @@ def main():
                     print("             "+each) 
                 backtostart = False
                 while backtostart == False:
-                    AccessCourse = input("Which Course would you like to Access?")
+                    AccessCourse = input("Which Course would you like to Access? ")
                     CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,CourseObjects)
                     while CourseAccessed == False:
-                        AccessCourse = input("You typed in the name wrong lol")
+                        AccessCourse = input("You typed in the name wrong lol ")
                         CourseAccessed = Access_Decks_in_Courses(AccessCourse,Sets,CourseObjects)
                     Repeat_Course = True
                     Empty = CheckifCoureseempty(CourseAccessed)
@@ -470,11 +469,11 @@ def main():
                         for each in CourseAccessed.Decks:
                             if each.Qlist != []:
                                 print(each.name)
-                        Deckname = input("Which Deck do you want to access?")
+                        Deckname = input("Which Deck do you want to access? ")
                         DeckAccessed = False
                         DeckAccessed = GetDeck(Deckname,CourseAccessed)
                         while DeckAccessed == False:
-                            Deckname = input(("You did not spell the name correctly"))
+                            Deckname = input(("You did not spell the name correctly "))
                             DeckAccessed = GetDeck(Deckname,CourseAccessed)
                             print(DeckAccessed)
                         Repeat_Deck = True
@@ -486,13 +485,13 @@ def main():
                             Answers.append(each)
                         Maxno = len(Questions)
                         while Repeat_Deck == True:
-                            Answer = input("There are "+str(Maxno)+" Questions. How many would you like to be tested on ?")
+                            Answer = input("There are "+str(Maxno)+" Questions. How many would you like to be tested on? ")
                             Cont = Check_Num_Validity(Answer,Maxno)
                             while Cont[0] == False:
                                 if Cont[1] != "notnum":
-                                    Answer = input("There are "+str(Maxno)+" Questions.Your number was "+Cont[1]+"er than any number between 1-"+str(Maxno))
+                                    Answer = input("There are "+str(Maxno)+" Questions.Your number was "+Cont[1]+"er than any number between 1-"+str(Maxno)+" ")
                                 elif Cont[1] == "notnum":
-                                    Answer = input("There are "+str(Maxno)+" Questions.Your number was not a valid number between 1-"+str(Maxno))
+                                    Answer = input("There are "+str(Maxno)+" Questions.Your number was not a valid number between 1-"+str(Maxno)+" ")
                                 Cont = Check_Num_Validity(Answer,Maxno)
                             QandAinfo =TestQuestions(Questions,Answers,int(Answer))
                             empty = QandAinfo[2]
@@ -505,7 +504,7 @@ def main():
                                             """)
                             Repeat = Check_Options(Repeat,5)
                             while empty == True and Repeat == "2":
-                                Repeat = input("You can not choose option two as you have answered all the questions choose another option")
+                                Repeat = input("You can not choose option two as you have answered all the questions choose another option ")
                                 Repeat = Check_Options(Repeat,4)
                             print(Repeat)
                             if Repeat == "1":
