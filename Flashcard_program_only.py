@@ -1,5 +1,6 @@
 from typing import Set#IDK what this does, i don't want to break the programm so it's here
 import random
+import pathlib
 class Deck_of_questions:
     Decknames = []
     def __init__(self,name):
@@ -226,10 +227,10 @@ def TestQuestions(Questions,Answers,num):#Test Questions
         if Answer.upper() != Answers[TestQ].upper():
             print("You answered the question incorrectly, The correct answer was "+Answers[TestQ])
             Correction = input("""If you think:
-                                  1)you got this right e.g silly spelling error
-                                  2)You just got it wrong
-                                  Press the corrosponding number
-                                  """)
+1)you got this right e.g silly spelling error
+2)You just got it wrong
+Press the corrosponding number
+""")
             Correction = Check_Options(Correction,3)
             if Correction == "1":
                 No_right += 1
@@ -339,12 +340,12 @@ def Ask_one_deck_questions(CourseAccessed,QtoA):
         QandAinfo =TestQuestions(Questions,Answers,int(Answer))
         empty = QandAinfo[2]
         Repeat = input("""Would you like to test yourself again on
-                        1) This Deck
-                        2) This Deck but without the questions you did this round
-                        3) Another Deck within this course
-                        4) Another Course
-                        5) Quit
-                        """)
+1) This Deck
+2) This Deck but without the questions you did this round
+3) Another Deck within this course
+4) Another Course
+5) Quit
+""")
         Repeat = Check_Options(Repeat,5)
         while empty == True and Repeat == "2":
             Repeat = input("You can not choose option two as you have answered all the questions choose another option ")
@@ -409,25 +410,25 @@ def main():
             print("""Hello, Welcome to Omars Flashcard file saver.""")
             DisplayCourses(Coursenames)
             option = input("""Would you like to:
-                    1)Create a new Course or rename a Course
-                    2)Access one of you current Courses and edit the Decks within or add new Decks
-                    3)Open a deck to test yourself on Questions
-                    4)Test yourself on multiple decks
-                    5)Import a file of questions and answers to a new or old deck 
-                    6)Delete Files#Does not work rn
-                    7)Quit
-                    press the corrosponding number.
-                    """)
+1)Create a new Course or rename a Course
+2)Access one of you current Courses and edit the Decks within or add new Decks
+3)Open a deck to test yourself on Questions
+4)Test yourself on multiple decks
+5)Import a file of questions and answers to a new or old deck 
+6)Delete Files#Does not work rn
+7)Quit
+press the corrosponding number.
+""")
 
             option = Check_Options(option,7)
             if option == "1":
                 backtostart = False
                 while backtostart == False:
                     Answer = input("""Would you like to:
-                                      1)Add a course
-                                      2)Rename a Course
-                                      3)Quit
-                                      """)
+1)Add a course
+2)Rename a Course
+3)Quit
+""")
                     if Answer == "1":
                         Coursename = Checkname("Course")# you can probablt put this in teh function below
                         CreateNewCourse(Coursenames,CourseObjects,Coursename)
@@ -455,11 +456,11 @@ def main():
                         for each in CourseAccessed.Decks:#shows the Deck within the Course
                             print(each.name)
                         Answer = input("""Would you like to:
-                                        1) Add Decks
-                                        2) Edit a Decks questions and answers
-                                        3) Access a different course
-                                        4) Quit to main menu
-                                        """)
+1) Add Decks
+2) Edit a Decks questions and answers
+3) Access a different course
+4) Quit to main menu
+""")
                         Answer = Check_Options(Answer,4)
                         if Answer == '1':
                             Repetitions = input("How many Decks would you like to add?")
@@ -488,14 +489,13 @@ def main():
                                         print( str(index+1)+")"+each+"   "+DeckAccessed.Alist[index])
                                         index += 1
                                     Options = input("""Would you like to:
-                                                    1)Edit a question
-                                                    2)Edit an answer
-                                                    3)Add a question and answer
-                                                    4)Delete a Question and Answer
-                                                    5)Import a file
-                                                    6)Goback to course menu to edit a different Deck or course
-                                                    """)
-                                    Options = Check_Options(Options,6)
+1)Edit a question
+2)Edit an answer
+3)Add a question and answer
+4)Delete a Question and Answer
+5)Goback to course menu to edit a different Deck or course
+""")
+                                    Options = Check_Options(Options,5)
                                     if Options == "1":
                                         Editno = input("which question number would you like to edit? ")
                                         Editno = Get_Answer_or_Question_num(DeckAccessed,Editno)
@@ -519,9 +519,6 @@ def main():
                                         IndextoDelete = input("Which Question number do you want to delete? ")
                                         IndextoDelete = Get_Answer_or_Question_num(DeckAccessed,IndextoDelete)
                                         DeckAccessed.DeleteQandA(int(IndextoDelete))
-                                    elif Options == "5":
-                                        print("This is in the works ")
-                                        pass
                                     elif Options == "6":
                                         SameDeck = False
                                         backtooptionmenu = True
@@ -544,9 +541,9 @@ def main():
                     if Empty == True:
                         Repeat_Course = False
                         Goback = input("""That Course is empty. Would you like to
-                                          1)Choose a different course
-                                          2)Quit
-                                          """)    
+1)Choose a different course
+2)Quit
+""")    
                         Check_Options(Goback,2)
                         if Goback == "2":
                             backtostart = True
@@ -575,7 +572,7 @@ def main():
                             Goback = input("""That course is empty. Would you like to:
 1)Choose a different course
 2)Quit
-                                            """)
+""")
                             Goback = Check_Options(Goback,2)# you can probably add this and above to the emptycourse function
                             if Goback == "2":
                                 AccessedCourse = True
@@ -637,11 +634,11 @@ def main():
                         QandAinfo =TestQuestions(Questions,Answers,int(Answer))
                         empty = QandAinfo[2]
                         Repeat = input("""Would you like to test yourself again on
-                                        1) These questions
-                                        2) These questions but without the questions you did this round
-                                        3) Another set of decks in other course
-                                        4)Quit
-                                        """)
+1) These questions
+2) These questions but without the questions you did this round
+3) Another set of decks in other course
+4)Quit
+""")
                         Repeat = Check_Options(Repeat,4)
                         while empty == True and Repeat == "2":
                             Repeat = input("You can not choose option two as you have answered all the questions choose another option")
