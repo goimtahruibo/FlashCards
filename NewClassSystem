@@ -1,0 +1,129 @@
+from typing import Set#IDK what this does, i don't want to break the programm so it's here
+import random
+import pathlib
+import os
+class Deck_of_questions:
+    Decknames = []
+    def __init__(self,name):
+        Deck_of_questions.Decknames.append(name)
+        self.name = name
+        self.Questionsfile = name+" QU.txt"
+        self.Answerfile = name +" AN.txt"
+    def CreateFiles(self):#creates question and answer files if the Decks do not exist
+        self.fileQ = open(self.Questionsfile,'w')
+        self.fileQ.close()
+        self.fileA = open(self.Answerfile,"w")#creates an empty text file
+        self.fileA.close()
+        self.ReadFiles()#runs Readfiles to create the question and answer list
+    def CreateAnswerandQuestionLists(self):#creates list of answer or Questions from files
+        newlist = []
+        for line in self.oldlist:
+            newlist.append(line.strip())
+        return(newlist)
+    def ReadFiles(self):#Reads the files
+        self.fileQ = open(self.Questionsfile,'r')
+        self.oldlist = self.fileQ.readlines()#Saves the text Question file to a list(oldlist: 
+        #it is called oldlist as it will be used temporarily to add to the newlist in create questions list)
+        self.Qlist = self.CreateAnswerandQuestionLists()#creates a question list from the oldlist but without the \n and
+        # adds it to the variable self.Qlist
+        self.fileQ.close()
+        self.fileA = open(self.Answerfile,"r")
+        self.oldlist = self.fileA.readlines()#repeats the same for Answers
+        self.Alist = self.CreateAnswerandQuestionLists()#repeats the same for Answers
+        self.fileA.close()
+    def AddQandA(self,Question,Answer):
+        self.Qlist.append(Question)
+        self.Alist.append(Answer)
+    def SaveQandA(self):#saves changes to answer and question list
+        self.fileQ = open(self.Questionsfile,'w')
+        for question in self.Qlist:
+            self.fileQ.write(question+"\n")
+        self.fileQ.close()
+        self.fileA = open(self.Answerfile,"w")
+        for answer in self.Alist:
+            self.fileA.write(answer+"\n")
+        self.fileA.close()   
+    def Import_QandAtextfile(self,QuestionFile,AnswerFile):#Test if this works when ellis comes and sends the file
+        self.ImportedQ = open(QuestionFile+".txt")
+        self.Importedlist = self.ImportedQ.readlines()
+        for each in self.Importedlist:
+            self.Qlist.append(each.strip())
+        self.ImportedQ.close()
+        self.ImportedA = open(AnswerFile+".txt")
+        self.Importedlist = self.ImportedA.readlines()
+        for each in self.Importedlist:
+            self.Alist.append(each.strip())
+        self.ImportedA.close()
+        self.SaveQandA()
+    def Import_csvQandA(self,Filename):
+        File = open(Filename+".csv","r")
+        Lines = File.readlines()
+        for each in Lines:
+            each = each.strip()
+            if "QUESTION" in each.upper() or "ANSWER" in each.upper():
+                pass
+            else:
+                comma = each.find(",")#Finds the index of the comma
+                Question = each[:comma]
+                Answer = each[comma+1:]
+                self.Qlist.append(Question)
+                self.Alist.append(Answer)
+        self.SaveQandA()
+    def DeleteQandA(self,Index):
+        self.Qlist.pop(Index)
+        self.Alist.pop(Index)
+        self.SaveQandA()
+    def AddTestQandAlist(self,Answers,Questions):
+        for each in self.Qlist:
+            Questions.append(each)
+        for each in self.Alist:
+            Answers.append(each)
+        return (Answers,Questions)
+        
+class Course:
+    Coursenames = []
+    def __init__(self,name):
+        Course.Coursenames.append(name)
+        self.name = name
+        self.Decks = []#the saved Deck objects
+        os.makedirs(name)
+    def CreateNewDeck(self,Deckname):#creates a new Deck object and saves it to the textfile
+        self.Decks.append(Deck_of_questions(Deckname))#adds an object to Decks list of type Deckofquestions
+        self.Decks[-1].CreateFiles()
+    def CreateDeckList(self):#if this is a new Course, this will be called to create a file to contain all of the Decks
+        #that will be put in the set
+        self.DecksFile = open(self.name+" Set.txt","w")
+        self.DecksFile.close()
+    def InstantiateSavedSets(self):# gets all the Deck names from the decksFile and turns them into the class Decks so they can be used
+        self.DecksFile = open(self.name+" Set.txt","r")#opens the textfile specific to the course
+        self.currentDecklist = self.DecksFile.readlines()#makes the list of the Decks
+        for name in self.currentDecklist:
+            self.Decks.append(Deck_of_questions(name.strip()))#creates the object and adds it to the list of decks
+        for each in self.Decks:
+            each.ReadFiles()# Reads the file of the objects so they can automatically get their Q and A list
+        self.DecksFile.close()
+    def GetDeck(self,Deckname):#Gets the Decks list with the name requested from the user
+        cont = False
+        while cont == False:
+            index = 0
+            for each in self.Decks:#Checks if the name from Deckname is the same as a name of a Deck within the Course the user already chose
+                if each.name.upper() == Deckname.upper():
+                    DeckAccessed = self.Decks[index]
+                    return(DeckAccessed)
+                index += 1
+            if index == len(self.Decks):# if the user types in the wrong name this will return false to continue a while loop
+                cont = False
+                Deckname = input("You spelt the name wrong, please give a new name")
+def t():
+    for path in pathlib.Path("Files").iterdir():
+        if path.is_file():
+            current_file = open(path, "r")
+            print(current_file.read())
+            current_file.close()
+#os.makedirs("Coursename")
+#Coursename = 'Coursename'
+#file_name = "tst.txt"
+#completeName = os.path.join(Coursename, file_name)
+#f = open(completeName,"w")
+#f.close()
+#ff = Course("Test")
