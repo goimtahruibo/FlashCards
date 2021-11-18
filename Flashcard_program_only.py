@@ -119,7 +119,7 @@ class Course:
                 Deckname = input("You spelt the name wrong, please give a new name")
 
 def GetCourse():#opens the Course file and gets the saved Decks
-    Sets = []
+    Coursenames = []
     try:#this try and except checks if there is a course file available, if not it makes a new one
         courses = open("CourseList.txt","r")
     except:
@@ -127,22 +127,22 @@ def GetCourse():#opens the Course file and gets the saved Decks
         courses.close()
         courses = open("CourseList.txt","r")
     Lines = courses.readlines()
-    for Set in Lines:
-        Sets.append(Set.strip())
+    for Course in Lines:
+        Coursenames.append(Course.strip())
     courses.close()
-    return(Sets)#the second half of this function will get all the names of the Courses
+    return(Coursenames)#the second half of this function will get all the names of the Courses
 
-def SaveCourses(Sets):#Saves the names of all the Courses created in this session
+def SaveCourses(Coursenames):#Saves the names of all the Courses created in this session
     File = open("CourseList.txt","w")
-    for each in Sets:#sets is a list of each name of the courses
+    for each in Coursenames:#sets is a list of each name of the courses
         File.write(each+"\n")
     File.close()
 
-def CreateNewCourse(Sets,CourseObjects,Coursename):# creates a new course and create and empty list for it to contain its Decks
-    Sets.append(Coursename)
+def CreateNewCourse(Coursenames,CourseObjects,Coursename):# creates a new course and create and empty list for it to contain its Decks
+    Coursenames.append(Coursename)
     CourseObjects.append(Course(Coursename))#creates a new Courses object with Coursename as the name
     CourseObjects[-1].CreateDeckList()#Creates the Decklist to contain its Decks
-    SaveCourses(Sets)
+    SaveCourses(Coursenames)
 
 
 def Access_Course(AccessSet,Coursenames,CourseObjects):#Returns the Set that the user wants
@@ -289,10 +289,11 @@ def Check_Repetition_number(number):#Used for when I ask for multuple decks to b
                 greaterthan0 = False
         if greaterthan0 == False or number.isdigit() == False:
             number = input("Sorry you have written the number incorrectly, it has to be a whole number > 0 ")
-def DisplayCourses(Coursenames):
+def DisplayCourses(Coursenames):#this was repeated a lot
     print("Your courses available are.")
     for each in Coursenames:
         print(each)
+
 def main():
     run = True
     index = 0
@@ -342,7 +343,7 @@ def main():
                                       """)
                     if Answer == "1":
                         Coursename = Checkname("Course")# you can probablt put this in teh function below
-                        CreateNewCourse(Coursename,CourseObjects,Coursename)
+                        CreateNewCourse(Coursenames,CourseObjects,Coursename)
                         Repetitions = input("How many Decks would you lke to add to this Course(must be greater than 0)?")
                         Cont = False
                         Repetitions = Check_Repetition_number(Repetitions)
@@ -637,20 +638,46 @@ def main():
                             
             elif option == "5":
                 Answer = input("""Would you like to:
-                                  1)Add to an existing Deck 
-                                  2)Create a new Deck
+1)Add to an existing Decks questions
+2)Create a new Deck and add questions
                                   """)
                 Answer = Check_Options(Answer,2)
+                DisplayCourses(Coursenames)
+                Accessed_Course = input("Which course would you like to access? ")
+                Accessed_Course = Access_Course(Accessed_Course,Coursenames,CourseObjects)
                 if Answer == "1":
-                    Accessed_Course = input("Which course would you like to access? ")
-                    Accessed_Course = Access_Course(Accessed_Course,Coursenames,CourseObjects)
-                    
-                ToDelete = input("""What would you like to delete?
-                                    1)Course
-                                    2)Deck
-                                    3)Quit
-                                    """)  
-                ToDelete = Check_Options(ToDelete,3)         
+                    print("the decks within the courses are:")
+                    for each in Accessed_Course.Decks:
+                        print(each.name)
+                    ChosenDeck = input("Which deck would you like to access? ")
+                    ChosenDeck = Accessed_Course.GetDeck(ChosenDeck)
+                else:
+                    Deckname = Checkname("Deck")
+                    Accessed_Course.CreateNewDeck(Deckname)
+                    ChosenDeck = Accessed_Course.Decks[-1]
+                FileOption = input("""Would you like to add:
+1) A csv file
+2) A question and Answer file""")
+                FileOption = Check_Options(FileOption,2)
+                if FileOption == "1":
+                    FileType = ".csv"
+                    Filename = input("What's the name of the csv")
+                    Filename = CheckFile(Filename,FileType)
+                    ChosenDeck.Import_csvQandA(Filename)
+                else:
+                    FileType = ".txt"
+            elif option == "6":
+                print("Work in progress")       
             else:
                 run = False
+
+def CheckFile(Filename,FileType):
+    cont = False
+    while cont == False:
+            try:
+                FileTest = open(Filename+FileType,"r")
+                FileTest.close()
+                return(Filename)
+            except:
+                Filename = input("There are no files in the folder with this name, remember to add it. ")
 main()
