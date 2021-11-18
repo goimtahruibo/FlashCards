@@ -1,6 +1,7 @@
 from typing import Set#IDK what this does, i don't want to break the programm so it's here
 import random
 import pathlib
+import os
 class Deck_of_questions:
     Decknames = []
     def __init__(self,name):
@@ -109,9 +110,6 @@ class Course:
         for each in self.Decks:
             each.ReadFiles()# Reads the file of the objects so they can automatically get their Q and A list
         self.DecksFile.close()
-    def RenameCourse(self,newname):
-        self.name = newname
-        self.SaveDecklist()
     def GetDeck(self,Deckname):#Gets the Decks list with the name requested from the user
         cont = False
         while cont == False:

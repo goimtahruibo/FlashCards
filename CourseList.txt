@@ -1,3 +1,2 @@
 Maths
-Physics
 EmptyTest
