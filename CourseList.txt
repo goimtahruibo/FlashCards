@@ -1,4 +1,2 @@
-Test
-Test2
 Maths
 Empty

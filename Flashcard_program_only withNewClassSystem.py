@@ -2,6 +2,8 @@ from typing import Set#IDK what this does, i don't want to break the programm so
 import random
 import pathlib
 import os
+import sys
+import shutil
 class Deck_of_questions:
     Decknames = []
     def __init__(self,name,Coursename):
@@ -32,7 +34,20 @@ class Deck_of_questions:
         self.oldlist = self.fileA.readlines()#repeats the same for Answers
         self.Alist = self.CreateAnswerandQuestionLists()#repeats the same for Answers
         self.fileA.close()
-    def AddQandA(self,Question,Answer):
+    def AddQandA(self,repetition):
+        QNo = repetition +1
+        if QNo == 1:
+            Question = input("What is your 1st Question?")
+            Answer = input("What is your 1st answer")
+        elif QNo == 2:
+            Question = input("What is your 2nd Question?")
+            Answer = input("What is your 2nd answer")  
+        elif QNo == 3:
+            Question = input("What is your 3rd Question?")
+            Answer = input("What is your 3rd answer") 
+        elif QNo > 3: 
+            Question = input("What is your "+str(QNo)+"th Question?")
+            Answer = input("What is your "+str(QNo)+"th answer")        
         self.Qlist.append(Question)
         self.Alist.append(Answer)
     def SaveQandA(self):#saves changes to answer and question list
@@ -119,11 +134,20 @@ class Course:
             if index == len(self.Decks):# if the user types in the wrong name this will return false to continue a while loop
                 cont = False
                 Deckname = input("You spelt the name wrong, please give a new name")
-    def RenameCourses(self,Newname):
+    def RenameCourses(self,Newname):#At this point I decided functions are grreat
         os.rename(self.Foldername,Newname+"Course")
         self.name = Newname
         self.Foldername = Newname+"Course"
-
+    def DeleteDeck(self,Deck):
+        index = 0
+        for each in self.Decks:
+            if each == Deck:
+                break
+            else:
+                index +=1
+        os.remove(Deck.Questionsfile)
+        os.remove(Deck.Answerfile)
+        self.Decks.pop(index)
 def GetCourses():#opens the Course file and gets the saved Decks
     CourseObjects = []
     try:#this try and except checks if there is a course file available, if not it makes a new one
@@ -379,7 +403,19 @@ def Ask_one_deck_questions(CourseAccessed,QtoA):
             Repeat_Deck = False
             Repeat_Course = False
             backtostart = True
-            return (Repeat_Course,backtostart)             
+            return (Repeat_Course,backtostart)  
+def Delete_Course(CourseObjects,Course):
+    index = 0
+    for each in CourseObjects:
+        if each == Course:
+            break
+        else:
+            index += 1
+    shutil.rmtree(Course.Foldername)#deletes all contents of folder
+    CourseObjects.pop(index)
+    SaveCourses(CourseObjects)
+    return(CourseObjects)
+                   
 def main():
     run = True
     index = 0
@@ -394,12 +430,14 @@ def main():
                 Cont = False
                 Repetitions = Check_Repetition_number(Repetitions)
                 for i in range(int(Repetitions)):
+                    print("Deck "+i)
                     Deckname = Checkname("Deck")
                     CourseObjects[-1].CreateNewDeck(Deckname)
                 
             else:
                 run == False
         else:
+            print("\n")
             print("""Hello, Welcome to Omars Flashcard file saver.""")
             DisplayCourses(CourseObjects)
             option = input("""Would you like to:
@@ -417,6 +455,7 @@ press the corrosponding number.
             if option == "1":
                 backtostart = False
                 while backtostart == False:
+                    print("\n")
                     Answer = input("""Would you like to:
 1)Add a course
 2)Rename a Course
@@ -430,6 +469,7 @@ press the corrosponding number.
                         Cont = False
                         Repetitions = Check_Repetition_number(Repetitions)
                         for i in range(int(Repetitions)):
+                            print("Deck "+i)
                             Deckname = Checkname("Deck")
                             CourseObjects[-1].CreateNewDeck(Deckname)
                     elif Answer == "2":
@@ -454,6 +494,7 @@ press the corrosponding number.
                         print("The Decks within "+CourseAccessed.name+" set are")
                         for each in CourseAccessed.Decks:#shows the Deck within the Course
                             print(each.name)
+                        print("\n")
                         Answer = input("""Would you like to:
 1) Add Decks
 2) Edit a Decks questions and answers
@@ -465,6 +506,7 @@ press the corrosponding number.
                             Repetitions = input("How many Decks would you like to add?")
                             Repetitions = Check_Repetition_number(Repetitions)
                             for i in range(int(Repetitions)):
+                                print("Deck ",i)
                                 Deckname = Checkname("Deck")
                                 CourseAccessed.CreateNewDeck(Deckname)
                         elif Answer == '2':
@@ -476,9 +518,7 @@ press the corrosponding number.
                                     Repetitions = input("There are no questions in this Deck, how many do you want to add?(must be >0")
                                     Repetitions = Check_Repetition_number(Repetitions) 
                                     for i in range(int(Repetitions)):
-                                        Question = input("What is the question")
-                                        Answr = input("What is the Answer") 
-                                        DeckAccessed.AddQandA(Question,Answr)     
+                                        DeckAccessed.AddQandA(i)     
                                     DeckAccessed.SaveQandA()   
                                 SameDeck = True
                                 while SameDeck == True:
@@ -487,6 +527,7 @@ press the corrosponding number.
                                     for each in DeckAccessed.Qlist:
                                         print( str(index+1)+")"+each+"   "+DeckAccessed.Alist[index])
                                         index += 1
+                                    print("\n")
                                     Options = input("""Would you like to:
 1)Edit a question
 2)Edit an answer
@@ -495,6 +536,7 @@ press the corrosponding number.
 5)Goback to course menu to edit a different Deck or course
 """)
                                     Options = Check_Options(Options,5)
+                                    print("\n")
                                     if Options == "1":
                                         Editno = input("which question number would you like to edit? ")
                                         Editno = Get_Answer_or_Question_num(DeckAccessed,Editno)
@@ -508,11 +550,10 @@ press the corrosponding number.
                                         DeckAccessed.Alist[Editno] = Edit
                                         DeckAccessed.SaveQandA()  
                                     elif Options == "3":
-                                        repetitions= int(input("How many questions and answers would you like to add?"))
-                                        for i in range(repetitions):
-                                            Question = input("What is the question ")
-                                            Answer = input("What is the Answer ")
-                                            DeckAccessed.AddQandA(Question,Answer)
+                                        repetitions= input("How many questions and answers would you like to add?")
+                                        repetitions = Check_Repetition_number(repetitions)
+                                        for i in range(int(repetitions)):
+                                            DeckAccessed.AddQandA(i)
                                         DeckAccessed.SaveQandA()
                                     elif Options == "4":
                                         IndextoDelete = input("Which Question number do you want to delete? ")
@@ -535,12 +576,14 @@ press the corrosponding number.
                     chosen = False
                     while chosen == False:
                         DisplayCourses(CourseObjects)
+                        print("\n")
                         AccessCourse = input("Which Course would you like to Access? ")
                         CourseAccessed = Access_Course(AccessCourse,CourseObjects)
                         Repeat_Course = True
                         Empty = CheckifCoureseempty(CourseAccessed)
                         if Empty == True:
                             Repeat_Course = False
+                            print("\n")
                             Goback = input("""That Course is empty. Would you like to
 1)Choose a different course
 2)Quit
@@ -554,6 +597,7 @@ press the corrosponding number.
                             chosen = True
                             cont = True
                     if cont == True:
+                        print("\n")
                         QtoA = input("""Would you like to test yourself on:
 1)Questions to Answers 
 2)Answers to Questions
@@ -570,12 +614,14 @@ press the corrosponding number.
                     while AccessedCourse == False:#This was added because of the Checkempty as I want the program to come back here
                         # if the course is empty. If I did not have the while loop I could not make RepeatDeck False as it would coninue the program to there (Can you tell I wrote this at 11 pm lol)
                         DisplayCourses(CourseObjects)
+                        print("\n")
                         AccessCourse = input("Which Course would you like to Access?")
                         CourseAccessed = Access_Course(AccessCourse,CourseObjects)
                         EmptyCourse = CheckifCoureseempty(CourseAccessed)
                         if EmptyCourse == True:
                             Repeat_Deck = False
                             Accessedall = True
+                            print("\n")
                             Goback = input("""That course is empty. Would you like to:
 1)Choose a different course
 2)Quit
@@ -592,6 +638,7 @@ press the corrosponding number.
                         TestDecks = []
                     
                     while Accessedall == False:
+                        print("\n")
                         print("Your Decks available to choose from are")
                         for each in DecksAvailable:
                             print(each.name)
@@ -604,9 +651,11 @@ press the corrosponding number.
                                 DecksAvailable.pop(index)
                             index += 1
                         if DecksAvailable == []:
+                            print("\n")
                             print("You have accessed all the Decks in this course, we will now move on")
                             Accessedall = True
                         else:
+                            print("\n")
                             print("You have accessed these Decks")
                             for each in TestDecks:
                                 print(each.name)
@@ -630,20 +679,24 @@ press the corrosponding number.
                         Answers.append(each)
                     while Repeat_Deck == True:
                         Maxno = len(Questions)
+                        print("\n")
                         Answer = input("There are "+str(Maxno)+" Questions. How many would you like to be tested on?")
                         Cont = Check_Num_Validity(Answer,Maxno)
                         while Cont[0] == False:
                             if Cont[1] != "notnum":
+                                print("\n")
                                 Answer = input("There are "+str(Maxno)+" Questions.Your number was "+Cont[1]+"er than any number between 1-"+str(Maxno))
                             elif Cont[1] == "notnum":
+                                print("\n")
                                 Answer = input("There are "+str(Maxno)+" Questions.Your number was not a valid number between 1-"+str(Maxno))
                             Cont = Check_Num_Validity(Answer,Maxno)
                         QandAinfo =TestQuestions(Questions,Answers,int(Answer))
                         empty = QandAinfo[2]
+                        print("\n")
                         Repeat = input("""Would you like to test yourself again on
-1) These questions
+1) The Full set of questions
 2) These questions but without the questions you did this round
-3) Another set of decks in other course
+3) Another group of decks in other course
 4)Quit
 """)
                         Repeat = Check_Options(Repeat,4)
@@ -681,7 +734,7 @@ press the corrosponding number.
                 Accessed_Course = input("Which course would you like to access? ")
                 Accessed_Course = Access_Course(Accessed_Course,CourseObjects)
                 if Answer == "1":
-                    print("the decks within the courses are:")
+                    print("the decks within the course are:")
                     for each in Accessed_Course.Decks:
                         print(each.name)
                     ChosenDeck = input("Which deck would you like to access? ")
@@ -702,7 +755,31 @@ press the corrosponding number.
                 else:
                     FileType = ".txt"
             elif option == "6":
-                print("Work in progress")       
+                backtostart = False
+                while backtostart == False:
+                    Answer = input("""Would you like to delete
+1) A deck
+2) A course
+""")
+                    Answer = Check_Options(Answer,2)
+                    DisplayCourses(CourseObjects)
+                    if Answer == "1":
+                        CourseAccessed = input("What course would you like to access?")     
+                        CourseAccessed = Access_Course(CourseAccessed,CourseObjects)
+                        print("The decks within "+CourseAccessed.name+" are:") 
+                        if CourseAccessed.Decks == []:
+                            print("That course has no decks within to begin with")
+                        else: 
+                            for each in CourseAccessed.Decks:
+                                print(each.name)  
+                            DeckAccessed = input("which deck wold you like to delete?")   
+                            DeckAccessed = CourseAccessed.GetDeck(DeckAccessed) 
+                            CourseAccessed.DeleteDeck(DeckAccessed)
+                        
+                    else:
+                        CourseAccessed = input("What course would you like to Delete?")     
+                        CourseAccessed = Access_Course(CourseAccessed,CourseObjects)
+                        CourseObjects = Delete_Course(CourseObjects,CourseAccessed)
             elif option == "7":
                 run = False
 main()
