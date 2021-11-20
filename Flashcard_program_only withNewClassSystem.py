@@ -446,7 +446,7 @@ def main():
 3)Open a deck to test yourself on Questions
 4)Test yourself on multiple decks
 5)Import a file of questions and answers to a new or old deck 
-6)Delete Files#Does not work rn
+6)Delete Files
 7)Quit
 press the corrosponding number.
 """)
