@@ -4,11 +4,12 @@ import pathlib
 import os
 class Deck_of_questions:
     Decknames = []
-    def __init__(self,name):
+    def __init__(self,name,Coursename):
         Deck_of_questions.Decknames.append(name)
         self.name = name
-        self.Questionsfile = name+" QU.txt"
-        self.Answerfile = name +" AN.txt"
+        self.Coursename = Coursename
+        self.Questionsfile = os.path.join(Coursename,name+"QU.txt" )
+        self.Answerfile =os.path.join(Coursename,name+"AN.txt" )
     def CreateFiles(self):#creates question and answer files if the Decks do not exist
         self.fileQ = open(self.Questionsfile,'w')
         self.fileQ.close()
@@ -84,24 +85,20 @@ class Course:
     Coursenames = []
     def __init__(self,name):
         Course.Coursenames.append(name)
-        self.name = name
+        self.name = name+"Course"
         self.Decks = []#the saved Deck objects
-        os.makedirs(name)
+        try:
+            os.makedirs(self.name)
+        except:
+            pass
     def CreateNewDeck(self,Deckname):#creates a new Deck object and saves it to the textfile
-        self.Decks.append(Deck_of_questions(Deckname))#adds an object to Decks list of type Deckofquestions
+        self.Decks.append(Deck_of_questions(Deckname,self.name))#adds an object to Decks list of type Deckofquestions
         self.Decks[-1].CreateFiles()
-    def CreateDeckList(self):#if this is a new Course, this will be called to create a file to contain all of the Decks
-        #that will be put in the set
-        self.DecksFile = open(self.name+" Set.txt","w")
-        self.DecksFile.close()
-    def InstantiateSavedSets(self):# gets all the Deck names from the decksFile and turns them into the class Decks so they can be used
-        self.DecksFile = open(self.name+" Set.txt","r")#opens the textfile specific to the course
-        self.currentDecklist = self.DecksFile.readlines()#makes the list of the Decks
-        for name in self.currentDecklist:
-            self.Decks.append(Deck_of_questions(name.strip()))#creates the object and adds it to the list of decks
-        for each in self.Decks:
-            each.ReadFiles()# Reads the file of the objects so they can automatically get their Q and A list
-        self.DecksFile.close()
+    def InstantiateSavedSets(self):
+        for path in pathlib.Path(self.name).iterdir():
+            if "QU" in path.name:
+                self.Decks.append(Deck_of_questions(path.name[0:-6],self.name))
+                self.Decks[-1].ReadFiles()
     def GetDeck(self,Deckname):#Gets the Decks list with the name requested from the user
         cont = False
         while cont == False:
@@ -114,16 +111,52 @@ class Course:
             if index == len(self.Decks):# if the user types in the wrong name this will return false to continue a while loop
                 cont = False
                 Deckname = input("You spelt the name wrong, please give a new name")
+
+
+def GetCourses():#opens the Course file and gets the saved Decks
+    CourseObjects = []
+    try:#this try and except checks if there is a course file available, if not it makes a new one
+        courses = open("CourseList.txt","r")
+    except:
+        courses = open("CourseList.txt","w")
+        courses.close()
+        courses = open("CourseList.txt","r")
+    Lines = courses.readlines()
+    for course in Lines:
+        CourseObjects.append(Course(course.strip()))
+        CourseObjects[-1].InstantiateSavedSets( )
+    courses.close()
+    return(CourseObjects)
+def CreateNewCourse(Coursename,CourseObjects):
+    CourseObjects.append(Course(Coursename))
+    SaveCourses(CourseObjects)
+    return(CourseObjects)
+def SaveCourses(CourseObjects):
+    CourseFile = open("CourseList.txt","w")
+    for each in CourseObjects:
+        CourseFile.write(each.name[:-6]+"\n")
+    CourseFile.close()
+CourseObjects = GetCourses()
+for each in CourseObjects:
+    print(each.name)
+for each in CourseObjects[-1].Decks:
+    print(each.name)
+#Test = Course("Test")
+#Test.InstantiateSavedSets()
+#for each in Test.Decks:
+#   print(each.name)
+def Testing():
+    Test = Course("Test")
+    Test.CreateNewDeck("TEstDEck")
+    Test.Decks[0].Qlist.append("Hi")
+    Test.Decks[0].Alist.append("bye")
+    print(Test.Decks[0].Qlist,Test.Decks[0].Alist)
+    Test.Decks[0].SaveQandA()
+
 def t():
-    for path in pathlib.Path("Files").iterdir():
+    for path in pathlib.Path("Test").iterdir():
         if path.is_file():
+            print(path.name[0:-6])
             current_file = open(path, "r")
             print(current_file.read())
             current_file.close()
-#os.makedirs("Coursename")
-#Coursename = 'Coursename'
-#file_name = "tst.txt"
-#completeName = os.path.join(Coursename, file_name)
-#f = open(completeName,"w")
-#f.close()
-#ff = Course("Test")
