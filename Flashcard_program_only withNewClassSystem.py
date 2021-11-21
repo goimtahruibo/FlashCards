@@ -682,11 +682,23 @@ press the corrosponding number.
                                     Accessedall = True
                         LongQuestions = []
                         LongAnswers = []
-                        for each in TestDecks:
-                            for Q in each.Qlist:
-                                LongQuestions.append(Q)
-                            for A in each.Alist:
-                                LongAnswers.append(A)
+                        QtoA = input("""Would you like to:
+1) Test your self on Question to answer
+2) Test yourself on Answer to Question
+""")
+                        QtoA = Check_Options(QtoA,2)
+                        if QtoA == "1":
+                            for each in TestDecks:
+                                for Q in each.Qlist:
+                                    LongQuestions.append(Q)
+                                for A in each.Alist:
+                                    LongAnswers.append(A)
+                        else:
+                            for each in TestDecks:
+                                for Q in each.Qlist:
+                                    LongAnswers.append(Q)
+                                for A in each.Alist:
+                                    LongQuestions.append(A)
                         #I will probably turn the next part into a function because it essentially will test questions just like option 3
                         Questions = []
                         Answers = []
