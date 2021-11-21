@@ -10,7 +10,7 @@ class Deck_of_questions:
         Deck_of_questions.Decknames.append(name)
         self.name = name
         self.Coursename = Coursename
-        self.Questionsfile = os.path.join(Coursename,name+"QU.txt" )
+        self.Questionsfile = os.path.join(Coursename,name+"QU.txt" )#creates path for Questions file
         self.Answerfile =os.path.join(Coursename,name+"AN.txt" )
     def CreateFiles(self):#creates question and answer files if the Decks do not exist
         self.fileQ = open(self.Questionsfile,'w')
@@ -104,24 +104,25 @@ class Deck_of_questions:
         self.Questionsfile = NewQuestionFile
         self.Answerfile = NewAnswerFile
 class Course:
-    Coursenames = []
+    AllDecks = []
     def __init__(self,name):
-        Course.Coursenames.append(name)
         self.name = name
         self.Foldername = name+"Course"
         self.Decks = []#the saved Deck objects
         try:
-            os.makedirs(self.Foldername)
+            os.makedirs(self.Foldername)#Makes a folder
         except:
             pass
     def CreateNewDeck(self,Deckname):#creates a new Deck object and saves it to the textfile
         self.Decks.append(Deck_of_questions(Deckname,self.Foldername))#adds an object to Decks list of type Deckofquestions
         self.Decks[-1].CreateFiles()
+        Course.AllDecks.append(self.Decks[-1])
     def InstantiateSavedSets(self):
         for path in pathlib.Path(self.Foldername).iterdir():
             if "QU" in path.name:
                 self.Decks.append(Deck_of_questions(path.name[0:-6],self.Foldername))
                 self.Decks[-1].ReadFiles()
+                Course.AllDecks.append(self.Decks[-1])
     def GetDeck(self,Deckname):#Gets the Decks list with the name requested from the user
         cont = False
         while cont == False:
@@ -135,7 +136,7 @@ class Course:
                 cont = False
                 Deckname = input("You spelt the name wrong, please give a new name")
     def RenameCourses(self,Newname):#At this point I decided functions are grreat
-        os.rename(self.Foldername,Newname+"Course")
+        os.rename(self.Foldername,Newname+"Course")#Renames it by making the directory be a new file
         self.name = Newname
         self.Foldername = Newname+"Course"
     def DeleteDeck(self,Deck):
@@ -145,9 +146,15 @@ class Course:
                 break
             else:
                 index +=1
-        os.remove(Deck.Questionsfile)
+        os.remove(Deck.Questionsfile)#Deletes the file
         os.remove(Deck.Answerfile)
         self.Decks.pop(index)
+        index = 0
+        for each in Course.AllDecks:
+            if each == Deck:
+                break
+            index += 1
+        Course.AllDecks.pop(index)
 def GetCourses():#opens the Course file and gets the saved Decks
     CourseObjects = []
     try:#this try and except checks if there is a course file available, if not it makes a new one
@@ -283,18 +290,21 @@ def Checkname(DeckorCourse):#Made to check that the user does not make a repeate
     Cont = False
     while Cont == False:
         index = 0
-        if DeckorCourse == "Deck":
-            for each in Deck_of_questions.Decknames:
-                if each.upper() == name.upper():
-                    index+=1
-        else:       
-            for each in Course.Coursenames:
-                if each.upper() == name.upper():
-                    index+=1
-        if index >0:
-            name = input("There is already a "+DeckorCourse+" named that. Input a new name")
+        if not name:#an empty string is considered False as a boolean
+            name = input("Your name can not be nothing")
         else:
-            return(name)
+            if DeckorCourse == "Deck":
+                for each in Deck_of_questions.Decknames:
+                    if each.upper() == name.upper():
+                        index+=1
+            else:       
+                for each in Course.Coursenames:
+                    if each.upper() == name.upper():
+                        index+=1
+            if index >0:
+                name = input("There is already a "+DeckorCourse+" named that. Input a new name")
+            else:
+                return(name)
 def CheckifCoureseempty(CourseAccessed):#Checks if a course is empty when doing the question test
     EmptyDecks = 0
     TotalDecks = 0
@@ -404,14 +414,20 @@ def Ask_one_deck_questions(CourseAccessed,QtoA):
             Repeat_Course = False
             backtostart = True
             return (Repeat_Course,backtostart)  
-def Delete_Course(CourseObjects,Course):
+def Delete_Course(CourseObjects,coursetogo):
     index = 0
+    DeckIndex = 0
     for each in CourseObjects:
-        if each == Course:
+        if each == coursetogo:
             break
         else:
             index += 1
-    shutil.rmtree(Course.Foldername)#deletes all contents of folder
+    for each in coursetogo.Decks:
+        for Deck in Course.AllDecks:
+            if Deck == each:
+                Course.AllDecks.pop(DeckIndex)
+            DeckIndex += 1
+    shutil.rmtree(coursetogo.Foldername)#deletes all contents of folder and the folder
     CourseObjects.pop(index)
     SaveCourses(CourseObjects)
     return(CourseObjects)
@@ -420,6 +436,7 @@ def main():
     run = True
     index = 0
     CourseObjects = GetCourses()
+
     while run == True:
         if CourseObjects == []:
             Answer = input("Welcome to Omars Flashcard thing. You currently have no Courses saved , press one to add one, 2 to quit")
@@ -437,6 +454,8 @@ def main():
             else:
                 run == False
         else:
+            for each in Course.AllDecks:
+                print(each.name)
             print("\n")
             print("""Hello, Welcome to Omars Flashcard file saver.""")
             DisplayCourses(CourseObjects)
@@ -469,7 +488,7 @@ press the corrosponding number.
                         Cont = False
                         Repetitions = Check_Repetition_number(Repetitions)
                         for i in range(int(Repetitions)):
-                            print("Deck "+i)
+                            print("Deck",i+1)
                             Deckname = Checkname("Deck")
                             CourseObjects[-1].CreateNewDeck(Deckname)
                     elif Answer == "2":
@@ -484,10 +503,19 @@ press the corrosponding number.
 
             if option == '2':
                 backtostart = False
+                print("\n")
                 while backtostart == False:
                     DisplayCourses(CourseObjects)
                     AccessCourse = input("Which Course would you like to Access?")
                     CourseAccessed = Access_Course(AccessCourse,CourseObjects)
+                    if CourseAccessed.Decks == []:
+                        print("That Course is empty")
+                        Repetitions = input("How many Decks do you want to add")
+                        Repetitions = Check_Repetition_number(Repetitions)
+                        for i in range(int(Repetitions)):
+                            print("Deck",i+1)
+                            Deckname = Checkname("Deck")
+                            CourseAccessed.CreateNewDeck(Deckname)                     
                     Samecourse = True
                     while Samecourse == True:
                             
@@ -506,7 +534,7 @@ press the corrosponding number.
                             Repetitions = input("How many Decks would you like to add?")
                             Repetitions = Check_Repetition_number(Repetitions)
                             for i in range(int(Repetitions)):
-                                print("Deck ",i)
+                                print("Deck",i+1)
                                 Deckname = Checkname("Deck")
                                 CourseAccessed.CreateNewDeck(Deckname)
                         elif Answer == '2':
@@ -760,8 +788,9 @@ press the corrosponding number.
                     Answer = input("""Would you like to delete
 1) A deck
 2) A course
+3) Quit to main menu
 """)
-                    Answer = Check_Options(Answer,2)
+                    Answer = Check_Options(Answer,3)
                     DisplayCourses(CourseObjects)
                     if Answer == "1":
                         CourseAccessed = input("What course would you like to access?")     
@@ -776,10 +805,12 @@ press the corrosponding number.
                             DeckAccessed = CourseAccessed.GetDeck(DeckAccessed) 
                             CourseAccessed.DeleteDeck(DeckAccessed)
                         
-                    else:
+                    elif Answer == "2":
                         CourseAccessed = input("What course would you like to Delete?")     
                         CourseAccessed = Access_Course(CourseAccessed,CourseObjects)
                         CourseObjects = Delete_Course(CourseObjects,CourseAccessed)
+                    else:
+                        backtostart = True
             elif option == "7":
                 run = False
 main()
