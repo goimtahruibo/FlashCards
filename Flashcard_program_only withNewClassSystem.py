@@ -431,7 +431,16 @@ def Delete_Course(CourseObjects,coursetogo):
     CourseObjects.pop(index)
     SaveCourses(CourseObjects)
     return(CourseObjects)
-                   
+def Check_All_Decks(AllDecks,Deckname): 
+    while True:
+        index = 0  
+        for each in AllDecks:
+            if each.name.upper() == Deckname.upper():
+                DeckAccessed = each
+                AllDecks.pop(index)
+                return(DeckAccessed,AllDecks)
+            index += 1  
+        Deckname = input("What is the name of the Deck you would like to add")        
 def main():
     run = True
     index = 0
@@ -636,121 +645,102 @@ press the corrosponding number.
                         Repeat_Course = RepeatFactors[0]
                         backtostart = RepeatFactors[1]
             elif option =="4":
+                DecksAvailable = []
                 backtostart = False
-                AccessedCourse = False
                 while backtostart == False:
-                    while AccessedCourse == False:#This was added because of the Checkempty as I want the program to come back here
-                        # if the course is empty. If I did not have the while loop I could not make RepeatDeck False as it would coninue the program to there (Can you tell I wrote this at 11 pm lol)
-                        DisplayCourses(CourseObjects)
-                        print("\n")
-                        AccessCourse = input("Which Course would you like to Access?")
-                        CourseAccessed = Access_Course(AccessCourse,CourseObjects)
-                        EmptyCourse = CheckifCoureseempty(CourseAccessed)
-                        if EmptyCourse == True:
-                            Repeat_Deck = False
-                            Accessedall = True
+                    for each in Course.AllDecks:
+                        if each.Qlist != []:
+                            DecksAvailable.append(each)
+                    TestDecks = []
+                    Accessedall = False
+                    if DecksAvailable == []:
+                        print("")
+                        print("There are no Questions to test")
+                        backtostart = True
+                    else:
+                        while Accessedall == False:
                             print("\n")
-                            Goback = input("""That course is empty. Would you like to:
-1)Choose a different course
-2)Quit
-""")
-                            Goback = Check_Options(Goback,2)# you can probably add this and above to the emptycourse function
-                            if Goback == "2":
-                                AccessedCourse = True
-                                backtostart = True
-                        else:
-                            AccessedCourse = True
-                            Accessedall = False
-                            Repeat_Deck = True
-                        DecksAvailable = CourseAccessed.Decks
-                        TestDecks = []
-                    
-                    while Accessedall == False:
-                        print("\n")
-                        print("Your Decks available to choose from are")
-                        for each in DecksAvailable:
-                            print(each.name)
-                        Deckname = input("Which Deck do you want to add to the list of questions?")
-                        DeckAccessed = CourseAccessed.GetDeck(Deckname)
-                        TestDecks.append(DeckAccessed)
-                        index = 0
-                        for each in DecksAvailable:
-                            if each.name == DeckAccessed.name:
-                                DecksAvailable.pop(index)
-                            index += 1
-                        if DecksAvailable == []:
-                            print("\n")
-                            print("You have accessed all the Decks in this course, we will now move on")
-                            Accessedall = True
-                        else:
-                            print("\n")
-                            print("You have accessed these Decks")
-                            for each in TestDecks:
+                            print("Your Decks available to choose from are")
+                            for each in DecksAvailable:
                                 print(each.name)
-                            YorN = input("Would you like to add another Deck Y/N")
-                            YorN = CheckYorN(YorN)
-                            if YorN.upper() == "N":
+                            Deckname = input("Which Deck do you want to add to the list of questions?")
+                            DeckAccessed = Check_All_Decks(DecksAvailable,Deckname)
+                            TestDecks.append(DeckAccessed[0])
+                            DecksAvailable = DeckAccessed[1]
+                            if DecksAvailable == []:
+                                print("\n")
+                                print("You have accessed all the Decks in this course, we will now move on")
                                 Accessedall = True
-                    LongQuestions = []
-                    LongAnswers = []
-                    for each in TestDecks:
-                        for Q in each.Qlist:
-                            LongQuestions.append(Q)
-                        for A in each.Alist:
-                            LongAnswers.append(A)
-                    #I will probably turn the next part into a function because it essentially will test questions just like option 3
-                    Questions = []
-                    Answers = []
-                    for each in LongQuestions:
-                        Questions.append(each)
-                    for each in LongAnswers:
-                        Answers.append(each)
-                    while Repeat_Deck == True:
-                        Maxno = len(Questions)
-                        print("\n")
-                        Answer = input("There are "+str(Maxno)+" Questions. How many would you like to be tested on?")
-                        Cont = Check_Num_Validity(Answer,Maxno)
-                        while Cont[0] == False:
-                            if Cont[1] != "notnum":
+                            else:
                                 print("\n")
-                                Answer = input("There are "+str(Maxno)+" Questions.Your number was "+Cont[1]+"er than any number between 1-"+str(Maxno))
-                            elif Cont[1] == "notnum":
-                                print("\n")
-                                Answer = input("There are "+str(Maxno)+" Questions.Your number was not a valid number between 1-"+str(Maxno))
+                                print("You have accessed these Decks")
+                                for each in TestDecks:
+                                    print(each.name)
+                                YorN = input("Would you like to add another Deck Y/N")
+                                YorN = CheckYorN(YorN)
+                                if YorN.upper() == "N":
+                                    Accessedall = True
+                        LongQuestions = []
+                        LongAnswers = []
+                        for each in TestDecks:
+                            for Q in each.Qlist:
+                                LongQuestions.append(Q)
+                            for A in each.Alist:
+                                LongAnswers.append(A)
+                        #I will probably turn the next part into a function because it essentially will test questions just like option 3
+                        Questions = []
+                        Answers = []
+                        for each in LongQuestions:
+                            Questions.append(each)
+                        for each in LongAnswers:
+                            Answers.append(each)
+                        Repeat_Deck = True
+                        while Repeat_Deck == True:
+                            Maxno = len(Questions)
+                            print("\n")
+                            Answer = input("There are "+str(Maxno)+" Questions. How many would you like to be tested on?")
                             Cont = Check_Num_Validity(Answer,Maxno)
-                        QandAinfo =TestQuestions(Questions,Answers,int(Answer))
-                        empty = QandAinfo[2]
-                        print("\n")
-                        Repeat = input("""Would you like to test yourself again on
-1) The Full set of questions
-2) These questions but without the questions you did this round
-3) Another group of decks in other course
-4)Quit
-""")
-                        Repeat = Check_Options(Repeat,4)
-                        while empty == True and Repeat == "2":
-                            Repeat = input("You can not choose option two as you have answered all the questions choose another option")
+                            while Cont[0] == False:
+                                if Cont[1] != "notnum":
+                                    print("\n")
+                                    Answer = input("There are "+str(Maxno)+" Questions.Your number was "+Cont[1]+"er than any number between 1-"+str(Maxno))
+                                elif Cont[1] == "notnum":
+                                    print("\n")
+                                    Answer = input("There are "+str(Maxno)+" Questions.Your number was not a valid number between 1-"+str(Maxno))
+                                Cont = Check_Num_Validity(Answer,Maxno)
+                            QandAinfo =TestQuestions(Questions,Answers,int(Answer))
+                            empty = QandAinfo[2]
+                            print("\n")
+                            Repeat = input("""Would you like to test yourself again on
+    1) The Full set of questions
+    2) These questions but without the questions you did this round
+    3) Another group of decks 
+    4)Quit
+    """)
                             Repeat = Check_Options(Repeat,4)
-                        
-                        if Repeat == "1":
-                            Questions = []
-                            Answers = []
-                            for each in LongQuestions:
-                                Questions.append(each)
-                            for each in LongAnswers:
-                                Answers.append(each)
-                            Maxno = len(Questions)
-                            Repeat_Deck == True
-                        elif Repeat == "2":
-                            Repeat_Deck = True
-                            Questions = QandAinfo[0]
-                            Answers = QandAinfo[1]
-                            Maxno = len(Questions)
-                        elif Repeat == "3":
-                            Repeat_Deck = False
-                        elif Repeat == "4":
-                            Repeat_Deck = False
-                            backtostart = True
+                            while empty == True and Repeat == "2":
+                                Repeat = input("You can not choose option two as you have answered all the questions choose another option")
+                                Repeat = Check_Options(Repeat,4)
+                            
+                            if Repeat == "1":
+                                Questions = []
+                                Answers = []
+                                for each in LongQuestions:
+                                    Questions.append(each)
+                                for each in LongAnswers:
+                                    Answers.append(each)
+                                Maxno = len(Questions)
+                                Repeat_Deck == True
+                            elif Repeat == "2":
+                                Repeat_Deck = True
+                                Questions = QandAinfo[0]
+                                Answers = QandAinfo[1]
+                                Maxno = len(Questions)
+                            elif Repeat == "3":
+                                Repeat_Deck = False
+                            elif Repeat == "4":
+                                Repeat_Deck = False
+                                backtostart = True
                             
             elif option == "5":
                 Answer = input("""Would you like to:
