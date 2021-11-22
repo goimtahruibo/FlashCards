@@ -105,7 +105,9 @@ class Deck_of_questions:
         self.Answerfile = NewAnswerFile
 class Course:
     AllDecks = []
+    Coursenames = []
     def __init__(self,name):
+        Course.Coursenames.append(name)
         self.name = name
         self.Foldername = name+"Course"
         self.Decks = []#the saved Deck objects
@@ -134,7 +136,7 @@ class Course:
                 index += 1
             if index == len(self.Decks):# if the user types in the wrong name this will return false to continue a while loop
                 cont = False
-                Deckname = input("You spelt the name wrong, please give a new name")
+                Deckname = input("You spelt the name wrong, please give a name of one of the decks above")
     def RenameCourses(self,Newname):#At this point I decided functions are grreat
         os.rename(self.Foldername,Newname+"Course")#Renames it by making the directory be a new file
         self.name = Newname
@@ -260,7 +262,7 @@ def TestQuestions(Questions,Answers,num):#Test Questions
 2)You just got it wrong
 Press the corrosponding number
 """)
-            Correction = Check_Options(Correction,3)
+            Correction = Check_Options(Correction,2)
             if Correction == "1":
                 No_right += 1
             else:#adds the wrong questions and answers to a list
@@ -381,7 +383,7 @@ def Ask_one_deck_questions(CourseAccessed,QtoA):
         Repeat = Check_Options(Repeat,5)
         while empty == True and Repeat == "2":
             Repeat = input("You can not choose option two as you have answered all the questions choose another option ")
-            Repeat = Check_Options(Repeat,4)
+            Repeat = Check_Options(Repeat,5)
         print(Repeat)
         if Repeat == "1":
             Questions = []
@@ -423,9 +425,11 @@ def Delete_Course(CourseObjects,coursetogo):
         else:
             index += 1
     for each in coursetogo.Decks:
+        print(len(Course.AllDecks))
         for Deck in Course.AllDecks:
             if Deck == each:
                 Course.AllDecks.pop(DeckIndex)
+                break
             DeckIndex += 1
     shutil.rmtree(coursetogo.Foldername)#deletes all contents of folder and the folder
     CourseObjects.pop(index)
@@ -456,12 +460,12 @@ def main():
                 Cont = False
                 Repetitions = Check_Repetition_number(Repetitions)
                 for i in range(int(Repetitions)):
-                    print("Deck "+i)
+                    print("Deck",i)
                     Deckname = Checkname("Deck")
                     CourseObjects[-1].CreateNewDeck(Deckname)
                 
             else:
-                run == False
+                run = False
         else:
             for each in Course.AllDecks:
                 print(each.name)
@@ -474,7 +478,7 @@ def main():
 3)Open a deck to test yourself on Questions
 4)Test yourself on multiple decks
 5)Import a file of questions and answers to a new or old deck 
-6)Delete Files
+6)Delete a deck or course
 7)Quit
 press the corrosponding number.
 """)
@@ -487,13 +491,12 @@ press the corrosponding number.
                     Answer = input("""Would you like to:
 1)Add a course
 2)Rename a Course
-3)Quit
+3)Quit to main menu
 """)
                     if Answer == "1":
-                        DisplayCourses(CourseObjects)
                         Coursename = Checkname("Course")# you can probablt put this in teh function below
                         CreateNewCourse(Coursename,CourseObjects)
-                        Repetitions = input("How many Decks would you lke to add to this Course(must be greater than 0)?")
+                        Repetitions = input("How many Decks of Questions would you lke to add to this Course(must be greater than 0)?")
                         Cont = False
                         Repetitions = Check_Repetition_number(Repetitions)
                         for i in range(int(Repetitions)):
@@ -502,7 +505,7 @@ press the corrosponding number.
                             CourseObjects[-1].CreateNewDeck(Deckname)
                     elif Answer == "2":
                         DisplayCourses(CourseObjects)
-                        AccessSet = input("Which deck would you like to change the name of: ")
+                        AccessSet = input("Which Course would you like to change the name of: ")
                         AccessSet = Access_Course(AccessSet,CourseObjects)
                         Newname = Checkname("Course")
                         AccessSet.RenameCourses(Newname)
@@ -536,9 +539,10 @@ press the corrosponding number.
 1) Add Decks
 2) Edit a Decks questions and answers
 3) Access a different course
-4) Quit to main menu
+4) Rename a Deck
+5) Quit to main menu
 """)
-                        Answer = Check_Options(Answer,4)
+                        Answer = Check_Options(Answer,5)
                         if Answer == '1':
                             Repetitions = input("How many Decks would you like to add?")
                             Repetitions = Check_Repetition_number(Repetitions)
@@ -547,6 +551,8 @@ press the corrosponding number.
                                 Deckname = Checkname("Deck")
                                 CourseAccessed.CreateNewDeck(Deckname)
                         elif Answer == '2':
+                            for each in CourseAccessed.Decks:#shows the Deck within the Course
+                                print(each.name)
                             backtooptionmenu = False
                             while backtooptionmenu == False:
                                 Deckname = input("Which Deck do you want to access?")
@@ -570,7 +576,7 @@ press the corrosponding number.
 2)Edit an answer
 3)Add a question and answer
 4)Delete a Question and Answer
-5)Goback to course menu to edit a different Deck or course
+5)Goback to editing menu to edit a different Deck or course
 """)
                                     Options = Check_Options(Options,5)
                                     print("\n")
@@ -601,6 +607,13 @@ press the corrosponding number.
                                         backtooptionmenu = True
                         elif Answer == '3':
                             Samecourse = False
+                        elif Answer == '4':
+                            
+                            Deckname = input("Which Deck do you want to access?")
+                            DeckAccessed = CourseAccessed.GetDeck(Deckname)
+                            Newname = Checkname("Deck")
+                            DeckAccessed.RenameDeck(Newname)
+                            
                         else:
                             Samecourse = False
                             backtostart = True
