@@ -425,7 +425,7 @@ def Delete_Course(CourseObjects,coursetogo):
         else:
             index += 1
     for each in coursetogo.Decks:
-        print(len(Course.AllDecks))
+        DeckIndex = 0
         for Deck in Course.AllDecks:
             if Deck == each:
                 Course.AllDecks.pop(DeckIndex)
