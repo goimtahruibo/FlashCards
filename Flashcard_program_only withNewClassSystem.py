@@ -4,6 +4,7 @@ import pathlib
 import os
 import sys
 import shutil
+import flask
 class Deck_of_questions:
     Decknames = []
     def __init__(self,name,Coursename):
@@ -103,6 +104,7 @@ class Deck_of_questions:
         os.rename(self.Answerfile,NewAnswerFile)
         self.Questionsfile = NewQuestionFile
         self.Answerfile = NewAnswerFile
+
 class Course:
     AllDecks = []
     Coursenames = []
@@ -157,6 +159,7 @@ class Course:
                 break
             index += 1
         Course.AllDecks.pop(index)
+
 def GetCourses():#opens the Course file and gets the saved Decks
     CourseObjects = []
     try:#this try and except checks if there is a course file available, if not it makes a new one
@@ -237,10 +240,10 @@ def Check_Options(Answer,LenOptions):#made because it will be repeated every sin
 def CheckYorN(answer):#Checks if the user typed in Y or N
     x = True
     while x == True:
-        if answer.upper() == "Y"  or answer.upper() == "N":
+        if answer.upper() == "Y" or answer.upper() == "YES"  or answer.upper() or answer.upper() == "N":
             return(answer)
-        else:
-            answer = input("You did not type Y or N. Try again. y = yes, n = no")
+        else: 
+            answer = input("You did not type Y or N. Try again. y = yes, n = no ")
 
 def TestQuestions(Questions,Answers,num):#Test Questions
     Questions_asked = []
@@ -280,7 +283,7 @@ Press the corrosponding number
     if Questions == []:
         empty = True
     if WrongAnswers != []:
-        Seemistake = input("Would you like to see the questions you got wrong? Y/N? ")
+        Seemistake = input("Would you like to see the questions you got wrong? Yes/No? ")
         Seemistake = CheckYorN(Seemistake)
         if Seemistake.upper() == "Y":
             for i in range(len(WrongQuestions)):
@@ -304,7 +307,7 @@ def Checkname(DeckorCourse):#Made to check that the user does not make a repeate
                     if each.upper() == name.upper():
                         index+=1
             if index >0:
-                name = input("There is already a "+DeckorCourse+" named that. Input a new name")
+                name = input("There is already a "+DeckorCourse+" named that. Input a new name. ")
             else:
                 return(name)
 def CheckifCoureseempty(CourseAccessed):#Checks if a course is empty when doing the question test
@@ -444,7 +447,7 @@ def Check_All_Decks(AllDecks,Deckname):
                 AllDecks.pop(index)
                 return(DeckAccessed,AllDecks)
             index += 1  
-        Deckname = input("What is the name of the Deck you would like to add")        
+        Deckname = input("What is the name of the Deck you would like to add ")        
 def main():
     run = True
     index = 0
@@ -452,11 +455,11 @@ def main():
 
     while run == True:
         if CourseObjects == []:
-            Answer = input("Welcome to Omars Flashcard thing. You currently have no Courses saved , press one to add one, 2 to quit")
+            Answer = input("Welcome to Omars Flashcard thing. You currently have no Courses saved , press one to add one, 2 to quit ")
             if Answer == "1":
                 Coursename = Checkname("Course")
                 CreateNewCourse(Coursename,CourseObjects)
-                Repetitions = input("How many Decks would you lke to add to this Course(must be greater than 0)?")
+                Repetitions = input("How many Decks would you lke to add to this Course(must be greater than 0)? ")
                 Cont = False
                 Repetitions = Check_Repetition_number(Repetitions)
                 for i in range(int(Repetitions)):
@@ -496,7 +499,7 @@ press the corrosponding number.
                     if Answer == "1":
                         Coursename = Checkname("Course")# you can probablt put this in teh function below
                         CreateNewCourse(Coursename,CourseObjects)
-                        Repetitions = input("How many Decks of Questions would you lke to add to this Course(must be greater than 0)?")
+                        Repetitions = input("How many Decks of Questions would you lke to add to this Course(must be greater than 0)? ")
                         Cont = False
                         Repetitions = Check_Repetition_number(Repetitions)
                         for i in range(int(Repetitions)):
@@ -518,11 +521,11 @@ press the corrosponding number.
                 print("\n")
                 while backtostart == False:
                     DisplayCourses(CourseObjects)
-                    AccessCourse = input("Which Course would you like to Access?")
+                    AccessCourse = input("Which Course would you like to Access? ")
                     CourseAccessed = Access_Course(AccessCourse,CourseObjects)
                     if CourseAccessed.Decks == []:
                         print("That Course is empty")
-                        Repetitions = input("How many Decks do you want to add")
+                        Repetitions = input("How many Decks do you want to add ")
                         Repetitions = Check_Repetition_number(Repetitions)
                         for i in range(int(Repetitions)):
                             print("Deck",i+1)
@@ -531,7 +534,7 @@ press the corrosponding number.
                     Samecourse = True
                     while Samecourse == True:
                             
-                        print("The Decks within "+CourseAccessed.name+" set are")
+                        print("The Decks within "+CourseAccessed.name+" set are ")
                         for each in CourseAccessed.Decks:#shows the Deck within the Course
                             print(each.name)
                         print("\n")
@@ -544,7 +547,7 @@ press the corrosponding number.
 """)
                         Answer = Check_Options(Answer,5)
                         if Answer == '1':
-                            Repetitions = input("How many Decks would you like to add?")
+                            Repetitions = input("How many Decks would you like to add? ")
                             Repetitions = Check_Repetition_number(Repetitions)
                             for i in range(int(Repetitions)):
                                 print("Deck",i+1)
@@ -555,10 +558,10 @@ press the corrosponding number.
                                 print(each.name)
                             backtooptionmenu = False
                             while backtooptionmenu == False:
-                                Deckname = input("Which Deck do you want to access?")
+                                Deckname = input("Which Deck do you want to access? ")
                                 DeckAccessed = CourseAccessed.GetDeck(Deckname)
                                 if DeckAccessed.Alist == []:
-                                    Repetitions = input("There are no questions in this Deck, how many do you want to add?(must be >0")
+                                    Repetitions = input("There are no questions in this Deck, how many do you want to add?(must be >0) ")
                                     Repetitions = Check_Repetition_number(Repetitions) 
                                     for i in range(int(Repetitions)):
                                         DeckAccessed.AddQandA(i)     
@@ -593,7 +596,7 @@ press the corrosponding number.
                                         DeckAccessed.Alist[Editno] = Edit
                                         DeckAccessed.SaveQandA()  
                                     elif Options == "3":
-                                        repetitions= input("How many questions and answers would you like to add?")
+                                        repetitions= input("How many questions and answers would you like to add? ")
                                         repetitions = Check_Repetition_number(repetitions)
                                         for i in range(int(repetitions)):
                                             DeckAccessed.AddQandA(i)
@@ -609,7 +612,7 @@ press the corrosponding number.
                             Samecourse = False
                         elif Answer == '4':
                             
-                            Deckname = input("Which Deck do you want to access?")
+                            Deckname = input("Which Deck do you want to access? ")
                             DeckAccessed = CourseAccessed.GetDeck(Deckname)
                             Newname = Checkname("Deck")
                             DeckAccessed.RenameDeck(Newname)
@@ -689,7 +692,7 @@ press the corrosponding number.
                                 print("You have accessed these Decks")
                                 for each in TestDecks:
                                     print(each.name)
-                                YorN = input("Would you like to add another Deck Y/N")
+                                YorN = input("Would you like to add another Deck Yes/No")
                                 YorN = CheckYorN(YorN)
                                 if YorN.upper() == "N":
                                     Accessedall = True
