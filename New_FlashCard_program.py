@@ -4,7 +4,7 @@ import pathlib
 import os
 import sys
 import shutil
-import flask
+
 class Deck_of_questions:
     Decknames = []
     def __init__(self,name,Coursename):
@@ -831,4 +831,5 @@ press the corrosponding number.
                         backtostart = True
             elif option == "7":
                 run = False
-main()
+if __name__ == "__main__":
+    main()

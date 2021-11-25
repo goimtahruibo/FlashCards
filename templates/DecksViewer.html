@@ -1,0 +1,19 @@
+<html>
+<head>
+    <title>Deck Viewer</title>
+    </heaad>
+    <body>
+        <h1>Welcome to the deck viewer for {{name}} </h1>
+        <table>
+            <tr>
+                <th>Deckname</th>
+            </tr>
+            {% for Deck in Decklist  %}
+                <tr>
+                    <th> {{Deck.name}} </th>
+                </tr>
+            {% endfor %}
+            <p> Add New Deck </p>
+        </table>   
+    </body>
+</html>
